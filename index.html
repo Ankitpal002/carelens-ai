@@ -144,6 +144,75 @@
     }
 
     /* ==================================================== */
+    /* AI STATUS BANNER - DUAL THEME ADAPTIVE STYLES       */
+    /* Guaranteed high contrast in both Light & Dark modes */
+    /* ==================================================== */
+    #aiStatusCard.ai-status-connected {
+      background-color: #ECFDF5 !important;
+      border: 3px solid #10B981 !important;
+    }
+    #aiStatusCard.ai-status-connected #aiStatusTitle {
+      color: #064E3B !important;
+    }
+    #aiStatusCard.ai-status-connected #aiStatusSubtitle {
+      color: #047857 !important;
+    }
+    #aiStatusCard.ai-status-connected #aiStatusDot {
+      background-color: #10B981 !important;
+    }
+
+    #aiStatusCard.ai-status-no-key {
+      background-color: #FFFBEB !important;
+      border: 3px solid #F59E0B !important;
+    }
+    #aiStatusCard.ai-status-no-key #aiStatusTitle {
+      color: #78350F !important;
+    }
+    #aiStatusCard.ai-status-no-key #aiStatusSubtitle {
+      color: #92400E !important;
+    }
+    #aiStatusCard.ai-status-no-key #aiStatusDot {
+      background-color: #F59E0B !important;
+    }
+
+    /* Safety Badges - Light Mode High Contrast */
+    #safetyBadgeContainer.bg-sage-light {
+      background-color: #ECFDF5 !important;
+      border-color: #10B981 !important;
+      color: #064E3B !important;
+    }
+    #safetyBadgeContainer.bg-sage-light #safetyBadgeTitle {
+      color: #064E3B !important;
+    }
+    #safetyBadgeContainer.bg-sage-light #safetyBadgeDesc {
+      color: #047857 !important;
+    }
+
+    #safetyBadgeContainer.bg-honey-light {
+      background-color: #FFFBEB !important;
+      border-color: #F59E0B !important;
+      color: #78350F !important;
+    }
+    #safetyBadgeContainer.bg-honey-light #safetyBadgeTitle {
+      color: #78350F !important;
+    }
+    #safetyBadgeContainer.bg-honey-light #safetyBadgeDesc {
+      color: #92400E !important;
+    }
+
+    #safetyBadgeContainer.bg-crimson-light {
+      background-color: #FEF2F2 !important;
+      border-color: #EF4444 !important;
+      color: #7F1D1D !important;
+    }
+    #safetyBadgeContainer.bg-crimson-light #safetyBadgeTitle {
+      color: #7F1D1D !important;
+    }
+    #safetyBadgeContainer.bg-crimson-light #safetyBadgeDesc {
+      color: #991B1B !important;
+    }
+
+    /* ==================================================== */
     /* SENIOR-OPTIMIZED COMFORT DARK MODE                  */
     /* Deep midnight slate #0F172A with crystal clear text */
     /* ==================================================== */
@@ -221,6 +290,37 @@
       color: #F8FAFC !important;
     }
 
+    /* AI Status Banner in Dark Mode */
+    body.dark-mode #aiStatusCard.ai-status-connected {
+      background-color: #064E3B !important;
+      border: 3px solid #34D399 !important;
+      box-shadow: 0 4px 14px rgba(6, 78, 59, 0.4) !important;
+    }
+    body.dark-mode #aiStatusCard.ai-status-connected #aiStatusTitle {
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #aiStatusCard.ai-status-connected #aiStatusSubtitle {
+      color: #D1FAE5 !important;
+    }
+    body.dark-mode #aiStatusCard.ai-status-connected #aiStatusDot {
+      background-color: #34D399 !important;
+    }
+
+    body.dark-mode #aiStatusCard.ai-status-no-key {
+      background-color: #78350F !important;
+      border: 3px solid #FBBF24 !important;
+      box-shadow: 0 4px 14px rgba(120, 53, 15, 0.4) !important;
+    }
+    body.dark-mode #aiStatusCard.ai-status-no-key #aiStatusTitle {
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #aiStatusCard.ai-status-no-key #aiStatusSubtitle {
+      color: #FEF3C7 !important;
+    }
+    body.dark-mode #aiStatusCard.ai-status-no-key #aiStatusDot {
+      background-color: #FBBF24 !important;
+    }
+
     /* Camera Viewport Dropzone */
     body.dark-mode #cameraDropzone {
       background-color: #1E293B !important;
@@ -295,10 +395,12 @@
     body.dark-mode #action1Icon {
       background-color: #78350F !important;
       color: #FDE68A !important;
+      border: 1px solid #B45309 !important;
     }
     body.dark-mode #action2Icon {
       background-color: #064E3B !important;
       color: #A7F3D0 !important;
+      border: 1px solid #059669 !important;
     }
 
     /* Results Header & Summary */
@@ -323,24 +425,38 @@
     /* Safety Badges in Dark Mode */
     body.dark-mode #safetyBadgeContainer.bg-sage-light {
       background-color: #064E3B !important;
-      border-color: #059669 !important;
-      color: #ECFDF5 !important;
-    }
-    body.dark-mode #safetyBadgeContainer.bg-crimson-light {
-      background-color: #7F1D1D !important;
-      border-color: #DC2626 !important;
-      color: #FEF2F2 !important;
-    }
-    body.dark-mode #safetyBadgeContainer.bg-honey-light {
-      background-color: #78350F !important;
-      border-color: #D97706 !important;
-      color: #FFFBEB !important;
-    }
-    body.dark-mode #safetyBadgeTitle {
+      border-color: #34D399 !important;
       color: #FFFFFF !important;
     }
-    body.dark-mode #safetyBadgeDesc {
-      color: #F8FAFC !important;
+    body.dark-mode #safetyBadgeContainer.bg-sage-light #safetyBadgeTitle {
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-sage-light #safetyBadgeDesc {
+      color: #D1FAE5 !important;
+    }
+
+    body.dark-mode #safetyBadgeContainer.bg-crimson-light {
+      background-color: #7F1D1D !important;
+      border-color: #F87171 !important;
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-crimson-light #safetyBadgeTitle {
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-crimson-light #safetyBadgeDesc {
+      color: #FEE2E2 !important;
+    }
+
+    body.dark-mode #safetyBadgeContainer.bg-honey-light {
+      background-color: #78350F !important;
+      border-color: #FBBF24 !important;
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-honey-light #safetyBadgeTitle {
+      color: #FFFFFF !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-honey-light #safetyBadgeDesc {
+      color: #FEF3C7 !important;
     }
 
     /* Audio voice player in Dark Mode */
@@ -407,17 +523,17 @@
       color: #60A5FA !important;
     }
     body.dark-mode button[onclick="loadPreset('medication')"] {
-      background-color: #78350F33 !important;
+      background-color: #78350F4D !important;
       color: #FDE68A !important;
       border-color: #B45309 !important;
     }
     body.dark-mode button[onclick="loadPreset('billing')"] {
-      background-color: #1E3A8A33 !important;
+      background-color: #1E3A8A4D !important;
       color: #93C5FD !important;
       border-color: #2563EB !important;
     }
     body.dark-mode button[onclick="loadPreset('scam')"] {
-      background-color: #7F1D1D33 !important;
+      background-color: #7F1D1D4D !important;
       color: #FCA5A5 !important;
       border-color: #DC2626 !important;
     }
@@ -554,19 +670,19 @@
       </div>
 
       <!-- Real-Time AI Status Banner -->
-      <div id="aiStatusCard" class="rounded-2xl p-3.5 sm:p-5 border-3 border-amber-400 bg-amber-50 text-amber-950 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+      <div id="aiStatusCard" class="rounded-2xl p-3.5 sm:p-5 border-3 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 ai-status-no-key">
         <div class="flex items-center gap-2.5 sm:gap-3">
-          <span id="aiStatusDot" class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0"></span>
+          <span id="aiStatusDot" class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full animate-pulse flex-shrink-0"></span>
           <div>
-            <p id="aiStatusTitle" class="text-base sm:text-xl font-extrabold text-gray-900">
+            <p id="aiStatusTitle" class="text-base sm:text-xl font-extrabold leading-tight">
               Live AI Status: API Key Needed for Real Image Analysis
             </p>
-            <p id="aiStatusSubtitle" class="text-xs sm:text-base text-gray-600">
+            <p id="aiStatusSubtitle" class="text-xs sm:text-base mt-0.5 font-medium">
               To analyze real photos with Google Gemini AI, please enter your free API key.
             </p>
           </div>
         </div>
-        <button onclick="openApiKeyModal()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-4 sm:px-5 min-h-[44px] sm:min-h-[48px] text-base sm:text-lg w-full sm:w-auto flex-shrink-0">
+        <button onclick="openApiKeyModal()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-4 sm:px-5 min-h-[44px] sm:min-h-[48px] text-base sm:text-lg w-full sm:w-auto flex-shrink-0 shadow-md">
           <span data-i18n="setApiKeyBtn">🔑 Set API Key</span>
         </button>
       </div>
@@ -2013,32 +2129,24 @@
 
     function updateAiStatusCard(hasKey) {
       const card = document.getElementById('aiStatusCard');
-      const dot = document.getElementById('aiStatusDot');
       const title = document.getElementById('aiStatusTitle');
       const subtitle = document.getElementById('aiStatusSubtitle');
       if (!card) return;
       const t = TRANSLATIONS[activeLanguage] || TRANSLATIONS['English'];
-      const isDark = document.body.classList.contains('dark-mode');
+      
+      // Clear any legacy inline styles
+      card.removeAttribute('style');
+
       if (hasKey) {
-        if (isDark) {
-          card.style.cssText = 'border-color:#10B981;background:#064E3B4D;box-shadow:0 1px 3px rgba(0,0,0,.3);';
-          dot.style.cssText = 'background:#34D399;';
-        } else {
-          card.style.cssText = 'border-color:#16a34a;background:#f0fdf4;box-shadow:0 1px 3px rgba(0,0,0,.08);';
-          dot.style.cssText = 'background:#16a34a;';
-        }
-        title.innerText = t.aiStatusTitleKey;
-        subtitle.innerText = t.aiStatusSubtitleKey;
+        card.classList.remove('ai-status-no-key');
+        card.classList.add('ai-status-connected');
+        if (title) title.innerText = t.aiStatusTitleKey;
+        if (subtitle) subtitle.innerText = t.aiStatusSubtitleKey;
       } else {
-        if (isDark) {
-          card.style.cssText = 'border-color:#F59E0B;background:#78350F3D;box-shadow:0 1px 3px rgba(0,0,0,.3);';
-          dot.style.cssText = 'background:#FBBF24;';
-        } else {
-          card.style.cssText = 'border-color:#f59e0b;background:#fffbeb;box-shadow:0 1px 3px rgba(0,0,0,.08);';
-          dot.style.cssText = 'background:#f59e0b;';
-        }
-        title.innerText = t.aiStatusTitleNoKey;
-        subtitle.innerText = t.aiStatusSubtitleNoKey;
+        card.classList.remove('ai-status-connected');
+        card.classList.add('ai-status-no-key');
+        if (title) title.innerText = t.aiStatusTitleNoKey;
+        if (subtitle) subtitle.innerText = t.aiStatusSubtitleNoKey;
       }
     }
 
