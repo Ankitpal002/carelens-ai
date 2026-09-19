@@ -182,11 +182,29 @@
         </p>
       </div>
 
+      <!-- Real-Time AI Status Banner -->
+      <div id="aiStatusCard" class="rounded-2xl p-4 sm:p-5 border-3 border-amber-400 bg-amber-50 text-amber-950 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span id="aiStatusDot" class="w-4 h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0"></span>
+          <div>
+            <p id="aiStatusTitle" class="text-xl font-extrabold text-gray-900">
+              Live AI Status: API Key Needed for Real Image Analysis
+            </p>
+            <p id="aiStatusSubtitle" class="text-base text-gray-600">
+              To analyze real photos with Google Gemini AI, please enter your free API key.
+            </p>
+          </div>
+        </div>
+        <button onclick="openApiKeyModal()" class="btn-senior bg-royal hover:bg-royal-hover text-white px-5 min-h-[48px] text-lg flex-shrink-0">
+          🔑 Set API Key
+        </button>
+      </div>
+
       <!-- THE SINGLE UNIVERSAL ACTION BUTTON (Giant 50% Viewport Shutter) -->
       <div 
         id="cameraDropzone"
-        onclick="triggerUniversalCamera()"
-        class="bg-white hover:bg-blue-50/60 border-4 border-dashed border-royal/70 hover:border-royal rounded-3xl p-8 sm:p-14 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[380px] shadow-xl group"
+        onclick="openLiveWebcam()"
+        class="bg-white hover:bg-blue-50/60 border-4 border-dashed border-royal/70 hover:border-royal rounded-3xl p-8 sm:p-14 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[300px] sm:min-h-[360px] shadow-xl group"
         role="button"
         tabindex="0"
         aria-label="Tap to open camera and point at anything"
@@ -196,29 +214,21 @@
           📸
         </div>
         <span class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
-          Tap Here to Scan Anything
+          Tap Here to Open Camera
         </span>
         <span class="text-xl sm:text-2xl text-royal font-semibold">
-          Auto-recognizes items, bills, medicines, or notices
+          Opens live camera viewfinder to scan anything
         </span>
       </div>
 
-      <!-- Quick Upload or Webcam Buttons -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <button 
-          onclick="openLiveWebcam()" 
-          class="btn-senior bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300"
-        >
-          <span>📹</span>
-          <span>Open Live Webcam Viewfinder</span>
-        </button>
-
+      <!-- Quick Upload from Device -->
+      <div class="flex flex-col sm:flex-row gap-4">
         <button 
           onclick="triggerFilePicker()" 
-          class="btn-senior bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300"
+          class="btn-senior bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300 w-full"
         >
           <span>📁</span>
-          <span>Upload Image from Device</span>
+          <span>Or Upload Photo / Document from Device</span>
         </button>
       </div>
 
@@ -256,10 +266,10 @@
     <div id="viewLoading" class="hidden flex-col items-center justify-center py-16 px-4 text-center">
       <div class="w-24 h-24 border-8 border-royal/20 border-t-royal rounded-full animate-spin mb-6"></div>
       <h3 class="text-3xl font-extrabold text-gray-900 mb-3">
-        Reading Your Document...
+        Analyzing Your Photo...
       </h3>
-      <p class="text-2xl text-gray-600 max-w-md">
-        Please give CareLens just two seconds. We are making sure everything is clear and safe for you.
+      <p id="loadingMessage" class="text-2xl text-gray-600 max-w-md">
+        Please give CareLens just a moment. We are sending this to Gemini AI to analyze it for you.
       </p>
     </div>
 
@@ -418,8 +428,11 @@
       <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
         ⚙️ Gemini API Key
       </h3>
-      <p class="text-lg text-gray-600 mb-4">
-        Enter your Google Gemini API key to activate live AI vision. If left empty, CareLens uses realistic demonstration examples.
+      <p id="apiKeyModalPrompt" class="text-lg text-gray-600 mb-3">
+        Enter your Google Gemini API key to activate live AI vision on your photos.
+      </p>
+      <p class="text-base text-royal font-semibold mb-4">
+        👉 Don't have one? Get a free key in 30 seconds at: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold">Google AI Studio</a>
       </p>
 
       <input 
@@ -448,11 +461,14 @@
   <!-- MODAL 2: FULL IMAGE PREVIEW                              -->
   <!-- ======================================================== -->
   <div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onclick="closeImageModal()">
-    <div class="max-w-2xl max-h-[90vh] bg-white rounded-2xl overflow-hidden p-2">
+    <div class="max-w-2xl max-h-[90vh] bg-white rounded-2xl overflow-hidden p-2" onclick="event.stopPropagation()">
       <img id="fullImagePreview" src="" alt="Full preview" class="w-full h-auto max-h-[80vh] object-contain rounded-xl" />
       <button class="btn-senior bg-gray-900 text-white w-full mt-2" onclick="closeImageModal()">
         Close Photo
       </button>
+    </div>
+  </div>
+
   <!-- ======================================================== -->
   <!-- MODAL 3: LIVE WEBCAM / CAMERA VIEWFINDER                 -->
   <!-- ======================================================== -->
@@ -461,7 +477,7 @@
       <div class="flex items-center justify-between w-full mb-3">
         <h3 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
           <span>📹</span>
-          <span>Point Camera at Any Item</span>
+          <span>Live Camera Viewfinder</span>
         </h3>
         <button onclick="closeLiveWebcam()" class="text-gray-500 hover:text-gray-800 text-3xl font-bold p-1">
           ✕
@@ -469,18 +485,18 @@
       </div>
 
       <!-- Live Video Viewfinder -->
-      <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden mb-4 border-2 border-gray-300 shadow-inner">
+      <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden mb-4 border-2 border-gray-300 shadow-inner flex items-center justify-center">
         <video id="webcamVideo" autoplay playsinline muted class="w-full h-full object-cover"></video>
         <!-- Reticle target for senior alignment -->
-        <div class="absolute inset-8 border-2 border-white/50 rounded-2xl pointer-events-none flex items-center justify-center">
-          <span class="text-white/80 bg-black/40 px-3 py-1 rounded-lg text-sm font-semibold">Hold item inside this box</span>
+        <div class="absolute inset-8 border-2 border-white/60 rounded-2xl pointer-events-none flex items-center justify-center">
+          <span class="text-white bg-black/60 px-3 py-1 rounded-lg text-base font-semibold">Hold item inside this box</span>
         </div>
       </div>
 
       <!-- Giant Shutter Button -->
       <button onclick="captureWebcamSnapshot()" class="btn-senior bg-royal hover:bg-royal-hover text-white w-full text-2xl py-4 shadow-xl mb-3">
         <span class="text-3xl">📸</span>
-        <span>Tap to Capture Now</span>
+        <span>Tap to Take Photo Now</span>
       </button>
 
       <button onclick="closeLiveWebcam()" class="text-gray-600 font-bold text-lg hover:underline py-2">
@@ -520,6 +536,8 @@
       // Populate API key input if stored
       if (activeApiKey) {
         document.getElementById('apiKeyInput').value = activeApiKey;
+        // Update status card to show AI is connected
+        updateAiStatusCard(true);
       }
     });
 
@@ -551,11 +569,32 @@
       activeApiKey = val;
       if (val) {
         localStorage.setItem('GEMINI_API_KEY', val);
+        updateAiStatusCard(true);
+        closeApiKeyModal();
       } else {
         localStorage.removeItem('GEMINI_API_KEY');
+        updateAiStatusCard(false);
+        closeApiKeyModal();
       }
-      closeApiKeyModal();
-      alert('API Key saved successfully.');
+    }
+
+    function updateAiStatusCard(hasKey) {
+      const card = document.getElementById('aiStatusCard');
+      const dot = document.getElementById('aiStatusDot');
+      const title = document.getElementById('aiStatusTitle');
+      const subtitle = document.getElementById('aiStatusSubtitle');
+      if (!card) return;
+      if (hasKey) {
+        card.className = 'rounded-2xl p-4 sm:p-5 border-3 border-trustGreen bg-emerald-50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm';
+        dot.className = 'w-4 h-4 rounded-full bg-trustGreen animate-pulse flex-shrink-0';
+        title.innerText = '✅ Live AI Active: Google Gemini Vision Connected';
+        subtitle.innerText = 'Your photos will be analyzed in real-time by Gemini AI.';
+      } else {
+        card.className = 'rounded-2xl p-4 sm:p-5 border-3 border-amber-400 bg-amber-50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm';
+        dot.className = 'w-4 h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0';
+        title.innerText = 'Live AI Status: API Key Needed for Real Image Analysis';
+        subtitle.innerText = 'To analyze real photos with Google Gemini AI, please enter your free API key.';
+      }
     }
 
     // ----------------------------------------------------
@@ -717,35 +756,83 @@
     // IMAGE PROCESSING & GEMINI MULTIMODAL API
     // ----------------------------------------------------
     async function processImage(dataUrl) {
-      showLoading(true);
-
-      // If user hasn't entered an API key, provide fallback demonstration
+      // BUG FIX #1: If no API key, show a clear friendly prompt instead of a silent fake response
       if (!activeApiKey) {
+        showLoading(false);
+        document.getElementById('viewCapture').classList.remove('hidden');
+        // Flash the status card and open the API key modal directly
+        const card = document.getElementById('aiStatusCard');
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          card.style.boxShadow = '0 0 0 4px #DC2626';
+          setTimeout(() => card.style.boxShadow = '', 2000);
+        }
         setTimeout(() => {
-          // Intelligent heuristic fallback for demo without key
-          const fallback = DEMO_PRESETS.billing;
-          currentAnalysis = fallback;
-          renderResults(fallback, dataUrl);
-          showLoading(false);
-        }, 1200);
+          openApiKeyModal();
+          document.getElementById('apiKeyModalPrompt').innerText =
+            '📸 You just uploaded a photo! To get a real AI analysis, please enter your Gemini API key below.';
+        }, 600);
         return;
       }
 
+      showLoading(true);
+
       try {
-        const response = await callGeminiVision(currentImageBase64);
+        // BUG FIX #3: Detect actual MIME type from the dataUrl, not hardcode jpeg
+        const mimeMatch = dataUrl.match(/^data:([^;]+);/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const response = await callGeminiVisionWithRetry(currentImageBase64, mimeType);
         currentAnalysis = response;
         renderResults(response, dataUrl);
       } catch (err) {
-        console.error("Gemini API Error:", err);
-        alert("Notice: Could not connect to Gemini API. Falling back to local demonstration analysis.");
-        currentAnalysis = DEMO_PRESETS.billing;
-        renderResults(DEMO_PRESETS.billing, dataUrl);
+        console.error('Gemini API Error:', err);
+        showLoading(false);
+        // Show a human-readable error screen instead of silent fallback
+        showApiError(err.message);
       } finally {
         showLoading(false);
       }
     }
 
-    async function callGeminiVision(base64Data) {
+    // BUG FIX #2: Retry with exponential backoff on 503 Gemini overload errors
+    async function callGeminiVisionWithRetry(base64Data, mimeType, maxRetries = 3) {
+      let lastError;
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          return await callGeminiVision(base64Data, mimeType);
+        } catch (err) {
+          lastError = err;
+          const isOverloaded = err.message.includes('503') || err.message.toLowerCase().includes('overloaded');
+          if (isOverloaded && attempt < maxRetries) {
+            const waitMs = attempt * 2000; // 2s, 4s, 6s
+            document.getElementById('loadingMessage') && (document.getElementById('loadingMessage').innerText =
+              `Gemini is busy right now. Retrying in ${waitMs/1000} seconds... (Attempt ${attempt}/${maxRetries})`);
+            await new Promise(r => setTimeout(r, waitMs));
+          } else {
+            throw err;
+          }
+        }
+      }
+      throw lastError;
+    }
+
+    function showApiError(message) {
+      const isOverloaded = message.includes('503') || message.toLowerCase().includes('overloaded');
+      const friendlyMsg = isOverloaded
+        ? 'Google Gemini AI is very busy right now (too many requests worldwide). Please wait 30 seconds and try again.'
+        : 'Could not connect to Gemini AI. Please check your internet connection and API key, then try again.';
+      document.getElementById('viewCapture').classList.remove('hidden');
+      const errBanner = document.createElement('div');
+      errBanner.id = 'tempErrorBanner';
+      errBanner.className = 'rounded-2xl p-5 border-4 border-alertRed bg-alertRed-bg text-gray-900 text-xl font-semibold shadow-lg';
+      errBanner.innerHTML = `<span class="text-2xl">⚠️</span> <strong>AI Analysis Error:</strong> ${friendlyMsg}<br><button onclick="document.getElementById('tempErrorBanner').remove()" class="mt-3 btn-senior bg-gray-200 text-gray-800 px-5 min-h-[44px] text-base">Dismiss</button>`;
+      const existingBanner = document.getElementById('tempErrorBanner');
+      if (existingBanner) existingBanner.remove();
+      document.getElementById('viewCapture').prepend(errBanner);
+    }
+
+    // BUG FIX #3: mimeType now passed as parameter instead of hardcoded as jpeg
+    async function callGeminiVision(base64Data, mimeType = 'image/jpeg') {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`;
       
       const systemInstruction = `You are CareLens AI, an exceptionally empathetic, crystal-clear visual daily companion for senior citizens (aged 70+).
@@ -770,7 +857,7 @@ Rules:
               { text: systemInstruction },
               {
                 inlineData: {
-                  mimeType: "image/jpeg",
+                  mimeType: mimeType,
                   data: base64Data
                 }
               }
@@ -795,11 +882,18 @@ Rules:
       }
 
       const data = await res.json();
+      // Handle unexpected or empty response shape gracefully
+      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+        throw new Error('Gemini returned an empty or blocked response. The image may be unclear. Please try again.');
+      }
       const rawText = data.candidates[0].content.parts[0].text;
-      
       // Clean possible markdown wrappers
-      const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned);
+      const cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      try {
+        return JSON.parse(cleaned);
+      } catch (parseErr) {
+        throw new Error('Gemini response could not be read. Please try with a clearer, well-lit photo.');
+      }
     }
 
     // ----------------------------------------------------
