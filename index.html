@@ -426,25 +426,26 @@
   <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border-4 border-royal shadow-2xl">
       <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
-        ⚙️ Gemini API Key
+        🔑 Connect Gemini AI
       </h3>
       <p id="apiKeyModalPrompt" class="text-lg text-gray-600 mb-3">
-        Enter your Google Gemini API key to activate live AI vision on your photos.
+        Enter your Google Gemini API key to activate real AI vision on your photos.
       </p>
       <p class="text-base text-royal font-semibold mb-4">
-        👉 Don't have one? Get a free key in 30 seconds at: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold">Google AI Studio</a>
+        👉 Get a <strong>free key</strong> in 30 seconds at: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold">Google AI Studio →</a>
       </p>
 
       <input 
         type="password" 
         id="apiKeyInput" 
-        placeholder="AIzaSy..." 
+        placeholder="Paste your key here: AIzaSy..." 
         class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl mb-4 font-mono focus:border-royal focus:outline-none"
+        onkeydown="if(event.key==='Enter') saveApiKey()"
       />
 
       <div class="flex flex-col sm:flex-row gap-3">
-        <button onclick="saveApiKey()" class="btn-senior bg-royal hover:bg-royal-hover text-white flex-1">
-          Save Key
+        <button id="saveApiKeyBtn" onclick="saveApiKey()" class="btn-senior bg-royal hover:bg-royal-hover text-white flex-1">
+          ✔ Save &amp; Connect
         </button>
         <button onclick="closeApiKeyModal()" class="btn-senior bg-gray-100 hover:bg-gray-200 text-gray-800 px-6">
           Cancel
@@ -452,7 +453,7 @@
       </div>
 
       <p class="text-sm text-gray-500 mt-4 text-center">
-        Your key is stored only in your browser's local memory (`localStorage`).
+        🔒 Your key is stored only in your browser (localStorage). Never shared.
       </p>
     </div>
   </div>
@@ -559,6 +560,10 @@
     // ----------------------------------------------------
     function openApiKeyModal() {
       document.getElementById('apiKeyInput').value = activeApiKey;
+      // Reset prompt to default state (clear any previous error color/text)
+      const prompt = document.getElementById('apiKeyModalPrompt');
+      prompt.style.color = '';
+      prompt.innerText = 'Enter your Google Gemini API key to activate real AI vision on your photos.';
       document.getElementById('apiKeyModal').classList.remove('hidden');
     }
     function closeApiKeyModal() {
@@ -566,15 +571,57 @@
     }
     function saveApiKey() {
       const val = document.getElementById('apiKeyInput').value.trim();
-      activeApiKey = val;
-      if (val) {
-        localStorage.setItem('GEMINI_API_KEY', val);
-        updateAiStatusCard(true);
-        closeApiKeyModal();
-      } else {
+      if (!val) {
         localStorage.removeItem('GEMINI_API_KEY');
+        activeApiKey = '';
         updateAiStatusCard(false);
         closeApiKeyModal();
+        return;
+      }
+      // Validate the key with a quick lightweight test call before saving
+      validateAndSaveApiKey(val);
+    }
+
+    async function validateAndSaveApiKey(key) {
+      const saveBtn = document.getElementById('saveApiKeyBtn');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.innerText = 'Checking key...'; }
+
+      try {
+        // Minimal test: send a tiny text-only request to verify the key works
+        const testRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: 'Say: OK' }] }],
+              generationConfig: { maxOutputTokens: 5 }
+            })
+          }
+        );
+
+        if (testRes.ok) {
+          activeApiKey = key;
+          localStorage.setItem('GEMINI_API_KEY', key);
+          updateAiStatusCard(true);
+          closeApiKeyModal();
+        } else {
+          const errBody = await testRes.json().catch(() => ({}));
+          const errMsg = errBody?.error?.message || `HTTP ${testRes.status}`;
+          const prompt = document.getElementById('apiKeyModalPrompt');
+          if (prompt) {
+            prompt.style.color = '#dc2626';
+            if (testRes.status === 400) prompt.innerText = '❌ Bad request — API key format may be wrong. Double-check you copied it fully.';
+            else if (testRes.status === 401 || testRes.status === 403) prompt.innerText = '❌ Invalid or unauthorized API key. Please copy it fresh from aistudio.google.com.';
+            else if (testRes.status === 429) prompt.innerText = '⚠️ Quota exceeded. Your free Gemini quota may be used up for today.';
+            else prompt.innerText = `❌ Error ${testRes.status}: ${errMsg}`;
+          }
+        }
+      } catch (netErr) {
+        const prompt = document.getElementById('apiKeyModalPrompt');
+        if (prompt) { prompt.style.color = '#dc2626'; prompt.innerText = '❌ Network error — check your internet connection and try again.'; }
+      } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerText = '✔ Save & Connect'; }
       }
     }
 
@@ -844,18 +891,40 @@
     }
 
     function showApiError(message) {
-      const isOverloaded = message.includes('503') || message.toLowerCase().includes('overloaded');
-      const friendlyMsg = isOverloaded
-        ? 'Google Gemini AI is very busy right now (too many requests worldwide). Please wait 30 seconds and try again.'
-        : 'Could not connect to Gemini AI. Please check your internet connection and API key, then try again.';
-      document.getElementById('viewCapture').classList.remove('hidden');
+      showLoading(false);
+      // Parse HTTP status from error message for specific guidance
+      let friendlyMsg = '';
+      let retryHint = '';
+      if (message.includes('401') || message.includes('403') || message.includes('API_KEY_INVALID')) {
+        friendlyMsg = 'Your Gemini API key is invalid or not authorized.';
+        retryHint = 'Please tap the 🔑 key icon above and re-enter your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#1d4ed8;text-decoration:underline">aistudio.google.com</a>.';
+      } else if (message.includes('429') || message.toLowerCase().includes('quota')) {
+        friendlyMsg = 'Daily Gemini AI quota exceeded (free limit reached).';
+        retryHint = 'Please try again tomorrow, or upgrade your Google AI plan.';
+      } else if (message.includes('400')) {
+        friendlyMsg = 'The image could not be read by Gemini AI (bad request).';
+        retryHint = 'Try uploading a clearer, well-lit photo in JPG or PNG format.';
+      } else if (message.includes('503') || message.toLowerCase().includes('overloaded')) {
+        friendlyMsg = 'Google Gemini AI is very busy right now.';
+        retryHint = 'Please wait 30 seconds and try again.';
+      } else {
+        friendlyMsg = 'Could not reach Gemini AI.';
+        retryHint = 'Check your internet connection and API key, then try again. Error: ' + message.substring(0, 120);
+      }
+
       const errBanner = document.createElement('div');
       errBanner.id = 'tempErrorBanner';
-      errBanner.className = 'rounded-2xl p-5 border-4 border-alertRed bg-alertRed-bg text-gray-900 text-xl font-semibold shadow-lg';
-      errBanner.innerHTML = `<span class="text-2xl">⚠️</span> <strong>AI Analysis Error:</strong> ${friendlyMsg}<br><button onclick="document.getElementById('tempErrorBanner').remove()" class="mt-3 btn-senior bg-gray-200 text-gray-800 px-5 min-h-[44px] text-base">Dismiss</button>`;
+      errBanner.style.cssText = 'background:#fef2f2;border:3px solid #dc2626;border-radius:16px;padding:20px 24px;margin-bottom:16px;font-size:18px;font-weight:600;color:#1e293b;box-shadow:0 2px 8px rgba(0,0,0,.1);';
+      errBanner.innerHTML = `
+        <div style="font-size:22px;margin-bottom:8px">⚠️ AI Analysis Error</div>
+        <div style="font-weight:700;margin-bottom:6px">${friendlyMsg}</div>
+        <div style="font-weight:400;font-size:16px;color:#475569;margin-bottom:14px">${retryHint}</div>
+        <button onclick="document.getElementById('tempErrorBanner').remove()" style="background:#f1f5f9;border:2px solid #cbd5e1;border-radius:10px;padding:10px 22px;font-size:16px;font-weight:600;cursor:pointer;">Dismiss &amp; Try Again</button>
+      `;
       const existingBanner = document.getElementById('tempErrorBanner');
       if (existingBanner) existingBanner.remove();
-      document.getElementById('viewCapture').prepend(errBanner);
+      const capture = document.getElementById('viewCapture');
+      capture.prepend(errBanner);
     }
 
     // BUG FIX #3: mimeType now passed as parameter instead of hardcoded as jpeg
@@ -877,7 +946,7 @@ Rules:
    - "secondaryValue": Secondary value (e.g. Oct 12th, With Dinner, Keep away from heat, Verified).
 6. "caregiverMessage": A warm, 1-line WhatsApp summary for their son or daughter if needed.`;
 
-      const payload = {
+       const payload = {
         contents: [
           {
             parts: [
@@ -892,8 +961,9 @@ Rules:
           }
         ],
         generationConfig: {
-          temperature: 0.2,
-          responseMimeType: "application/json"
+          temperature: 0.2
+          // NOTE: responseMimeType: "application/json" is intentionally removed.
+          // It causes HTTP 400 errors on most API key tiers. We parse JSON manually instead.
         }
       };
 
