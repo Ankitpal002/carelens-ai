@@ -1,0 +1,17 @@
+# Environments & Secrets
+.env
+.env.local
+*.key
+
+# Operating System & IDE Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node / Python Artifacts
+__pycache__/
+*.py[cod]
+node_modules/
+dist/
+build/

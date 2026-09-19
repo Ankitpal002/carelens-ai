@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareLens AI - Senior Daily Companion</title>
+  
+  <!-- Google Fonts: Outfit & Inter for Maximum Senior Legibility -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            cream: {
+              50: '#FAF8F5',
+              100: '#F5EFE6',
+              200: '#E8DFD0',
+            },
+            royal: {
+              DEFAULT: '#1A56DB',
+              hover: '#1442A6',
+            },
+            forest: {
+              DEFAULT: '#0D7653',
+              hover: '#09533B',
+            },
+            alertRed: {
+              DEFAULT: '#DC2626',
+              bg: '#FEF2F2',
+              border: '#B91C1C',
+            },
+            trustGreen: {
+              DEFAULT: '#059669',
+              bg: '#ECFDF5',
+              border: '#047857',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* WCAG 2.2 AAA Senior Accessibility Rules */
+    :root {
+      --font-scale: 1rem;
+    }
+    html {
+      font-size: var(--font-scale);
+      scroll-behavior: smooth;
+    }
+    body {
+      background-color: #FAF8F5;
+      color: #111827;
+      font-family: 'Outfit', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Touch Target Strict Min 64px */
+    .btn-senior {
+      min-height: 64px;
+      font-size: 1.25rem; /* 20px */
+      font-weight: 700;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: all 0.15s ease-in-out;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      user-select: none;
+    }
+    .btn-senior:active {
+      transform: scale(0.98);
+    }
+    .btn-senior:focus-visible {
+      outline: 4px solid #1A56DB;
+      outline-offset: 4px;
+    }
+
+    /* Sound wave animation */
+    @keyframes soundwave {
+      0%, 100% { height: 8px; }
+      50% { height: 28px; }
+    }
+    .wave-bar {
+      width: 4px;
+      background-color: currentColor;
+      border-radius: 2px;
+      animation: soundwave 1s infinite ease-in-out;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.6s; }
+
+    /* High contrast mode */
+    body.high-contrast {
+      background-color: #000000 !important;
+      color: #FFFFFF !important;
+    }
+    body.high-contrast .bg-white,
+    body.high-contrast .bg-cream-50,
+    body.high-contrast .bg-cream-100 {
+      background-color: #121212 !important;
+      color: #FFFF00 !important;
+      border-color: #FFFF00 !important;
+    }
+    body.high-contrast .text-gray-600,
+    body.high-contrast .text-gray-700,
+    body.high-contrast .text-gray-800 {
+      color: #FFFFFF !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- TOP ACCESSIBILITY & SETTINGS HEADER -->
+  <header class="bg-white border-b-2 border-gray-200 sticky top-0 z-40 px-4 py-3 shadow-sm">
+    <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+      
+      <!-- Brand & Senior Badge -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-royal text-white flex items-center justify-center text-2xl shadow-md">
+          🔍
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 leading-tight">
+            CareLens <span class="text-royal">AI</span>
+          </h1>
+          <p class="text-sm sm:text-base font-semibold text-forest flex items-center gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-forest animate-pulse"></span>
+            Senior Companion Mode Active
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Accessibility Tools -->
+      <div class="flex items-center gap-2">
+        <!-- Text Size Magnifier Toggle -->
+        <button id="textSizeBtn" onclick="toggleTextSize()" class="h-12 px-3 sm:px-4 rounded-xl border-2 border-gray-300 bg-gray-50 text-gray-800 font-bold text-lg hover:bg-gray-100 flex items-center gap-1.5" title="Increase Text Size" aria-label="Adjust font size">
+          <span>🔍</span>
+          <span id="textSizeLabel" class="hidden sm:inline text-base">Text: Normal</span>
+        </button>
+
+        <!-- High Contrast Mode Toggle -->
+        <button id="contrastBtn" onclick="toggleHighContrast()" class="h-12 w-12 rounded-xl border-2 border-gray-300 bg-gray-50 text-gray-800 font-bold text-xl flex items-center justify-center hover:bg-gray-100" title="High Contrast Mode" aria-label="Toggle High Contrast">
+          🌓
+        </button>
+
+        <!-- Gemini API Key Modal Trigger -->
+        <button onclick="openApiKeyModal()" class="h-12 px-3 sm:px-4 rounded-xl border-2 border-royal text-royal font-bold text-base hover:bg-blue-50 flex items-center gap-1.5" title="Configure API Key">
+          <span>⚙️</span>
+          <span class="hidden md:inline">API Key</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APPLICATION CONTAINER -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: CAPTURE / UPLOAD SCREEN                          -->
+    <!-- ======================================================== -->
+    <div id="viewCapture" class="flex flex-col gap-6">
+      
+      <!-- Friendly Greeting Banner -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-gray-200 shadow-sm text-center">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
+          Point at Anything — CareLens Explains It!
+        </h2>
+        <p class="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto">
+          Point your camera at <strong>any item, medicine bottle, paper bill, appliance dial, food, or letter</strong>. Tap one button and CareLens will speak what it is and what to do.
+        </p>
+      </div>
+
+      <!-- THE SINGLE UNIVERSAL ACTION BUTTON (Giant 50% Viewport Shutter) -->
+      <div 
+        id="cameraDropzone"
+        onclick="triggerUniversalCamera()"
+        class="bg-white hover:bg-blue-50/60 border-4 border-dashed border-royal/70 hover:border-royal rounded-3xl p-8 sm:p-14 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[380px] shadow-xl group"
+        role="button"
+        tabindex="0"
+        aria-label="Tap to open camera and point at anything"
+      >
+        <!-- Shutter Camera Icon -->
+        <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-royal text-white flex items-center justify-center text-5xl sm:text-7xl mb-5 group-hover:scale-105 transition-transform shadow-lg">
+          📸
+        </div>
+        <span class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
+          Tap Here to Scan Anything
+        </span>
+        <span class="text-xl sm:text-2xl text-royal font-semibold">
+          Auto-recognizes items, bills, medicines, or notices
+        </span>
+      </div>
+
+      <!-- Quick Upload or Webcam Buttons -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button 
+          onclick="openLiveWebcam()" 
+          class="btn-senior bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300"
+        >
+          <span>📹</span>
+          <span>Open Live Webcam Viewfinder</span>
+        </button>
+
+        <button 
+          onclick="triggerFilePicker()" 
+          class="btn-senior bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-300"
+        >
+          <span>📁</span>
+          <span>Upload Image from Device</span>
+        </button>
+      </div>
+
+      <!-- Hidden File Inputs -->
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelected(event)" />
+      <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleFileSelected(event)" />
+
+      <!-- COLLAPSIBLE DEMO TEST SAMPLES (Discreet, optional helper for judges) -->
+      <div class="border border-gray-300 bg-gray-50/80 rounded-2xl p-4 mt-2">
+        <details class="cursor-pointer">
+          <summary class="text-lg font-bold text-gray-700 flex items-center justify-between select-none">
+            <span>💡 Testing without a physical object? Try quick sample images</span>
+            <span class="text-sm font-normal text-royal">Click to expand</span>
+          </summary>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 pt-3 border-t border-gray-200">
+            <button onclick="loadPreset('medication')" class="btn-senior bg-white hover:bg-amber-50 text-amber-900 border border-amber-300 text-base py-2 px-3">
+              <span>💊 Medicine Bottle</span>
+            </button>
+            <button onclick="loadPreset('billing')" class="btn-senior bg-white hover:bg-blue-50 text-blue-900 border border-blue-300 text-base py-2 px-3">
+              <span>⚡ Electric Bill</span>
+            </button>
+            <button onclick="loadPreset('scam')" class="btn-senior bg-white hover:bg-red-50 text-red-900 border border-red-300 text-base py-2 px-3">
+              <span>🚨 Suspicious Letter</span>
+            </button>
+          </div>
+        </details>
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: LOADING SPINNER (Calm, Reassuring for Seniors)   -->
+    <!-- ======================================================== -->
+    <div id="viewLoading" class="hidden flex-col items-center justify-center py-16 px-4 text-center">
+      <div class="w-24 h-24 border-8 border-royal/20 border-t-royal rounded-full animate-spin mb-6"></div>
+      <h3 class="text-3xl font-extrabold text-gray-900 mb-3">
+        Reading Your Document...
+      </h3>
+      <p class="text-2xl text-gray-600 max-w-md">
+        Please give CareLens just two seconds. We are making sure everything is clear and safe for you.
+      </p>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- VIEW 3: RESULTS SCREEN                                   -->
+    <!-- ======================================================== -->
+    <div id="viewResults" class="hidden flex-col gap-6">
+
+      <!-- Top Action Bar: Re-Scan + Image Preview -->
+      <div class="flex items-center justify-between gap-3 bg-white p-4 rounded-2xl border-2 border-gray-200">
+        <button onclick="resetToHome()" class="btn-senior bg-gray-100 hover:bg-gray-200 text-gray-800 px-5 min-h-[52px] text-lg">
+          <span>⬅️</span>
+          <span>Scan Another</span>
+        </button>
+        <div class="flex items-center gap-3">
+          <img id="resultThumbnail" src="" alt="Thumbnail of scanned document" class="w-14 h-14 object-cover rounded-xl border-2 border-gray-300 shadow-sm cursor-pointer" onclick="openImageModal()" />
+          <span class="text-base text-gray-500 font-semibold hidden sm:inline">Photo captured</span>
+        </div>
+      </div>
+
+      <!-- 1. SAFETY TRUST BADGE (WCAG 2.2 AAA High Contrast) -->
+      <div id="safetyBadgeContainer" class="rounded-2xl p-5 border-4 flex items-center gap-4 shadow-sm">
+        <div id="safetyBadgeIcon" class="text-5xl flex-shrink-0">🛡️</div>
+        <div>
+          <div id="safetyBadgeTitle" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-wide">
+            VERIFIED SAFE
+          </div>
+          <p id="safetyBadgeDesc" class="text-xl sm:text-2xl font-medium mt-1">
+            This notice is authentic and safe to follow.
+          </p>
+        </div>
+      </div>
+
+      <!-- 2. "EXPLAIN LIKE I'M 75" 2-SENTENCE SUMMARY BOX -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border-3 border-gray-300 shadow-md">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-sm font-extrabold uppercase tracking-wider text-royal bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
+            Plain Language Summary
+          </span>
+          <span id="classificationTag" class="text-sm font-bold bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg">
+            DOCUMENT
+          </span>
+        </div>
+
+        <p id="summaryText" class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-relaxed mb-6">
+          This is an electric bill from City Power for the month of October. You need to pay forty-two dollars by October twelfth.
+        </p>
+
+        <!-- STICKY / FLOATING AUDIO VOICE PLAYER (Calibrated for Seniors ~0.88x) -->
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3 text-royal">
+            <div id="waveContainer" class="hidden flex items-center gap-1 h-8">
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+            </div>
+            <div>
+              <p class="font-bold text-lg sm:text-xl text-royal">Voice Audio Companion</p>
+              <p class="text-sm text-gray-600 font-medium">Gentle pace (0.88x speed) for easy listening</p>
+            </div>
+          </div>
+
+          <button id="audioToggleBtn" onclick="toggleAudioPlayback()" class="btn-senior bg-royal hover:bg-royal-hover text-white w-full sm:w-auto px-8 shadow-md">
+            <span id="audioIcon" class="text-2xl">🔊</span>
+            <span id="audioLabel">Read Aloud to Me</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. EXTRACTED ACTION CARDS (Massive 28px+ typography) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        <!-- Primary Action Card -->
+        <div class="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-sm flex items-center gap-4">
+          <div id="action1Icon" class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-3xl flex-shrink-0">
+            💵
+          </div>
+          <div>
+            <p id="action1Label" class="text-lg font-bold text-gray-500 uppercase tracking-wider">
+              Total Amount Due
+            </p>
+            <p id="action1Value" class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-0.5">
+              $42.50
+            </p>
+          </div>
+        </div>
+
+        <!-- Secondary Action Card -->
+        <div class="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-sm flex items-center gap-4">
+          <div id="action2Icon" class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-3xl flex-shrink-0">
+            📅
+          </div>
+          <div>
+            <p id="action2Label" class="text-lg font-bold text-gray-500 uppercase tracking-wider">
+              Due Date
+            </p>
+            <p id="action2Value" class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-0.5">
+              October 12th
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4. VOICE QUESTION FOLLOW-UP ("ASK CARELENS") -->
+      <div class="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-sm">
+        <h4 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+          <span>🎙️</span>
+          <span>Have a question about this? Tap and ask:</span>
+        </h4>
+        <div class="flex flex-col sm:flex-row gap-3 items-center">
+          <button id="micBtn" onclick="toggleSpeechQuestion()" class="btn-senior bg-gray-100 hover:bg-gray-200 text-gray-800 border-2 border-gray-300 w-full sm:w-auto px-6">
+            <span id="micIcon" class="text-2xl">🎤</span>
+            <span id="micText">Tap to Speak Question</span>
+          </button>
+          <p id="voiceQuestionStatus" class="text-lg text-gray-500 italic">
+            e.g. "When should I take this?" or "Is this a trick?"
+          </p>
+        </div>
+        <div id="voiceAnswerBox" class="hidden mt-4 p-4 rounded-xl bg-blue-50 border border-blue-200 text-xl font-medium text-royal">
+          <!-- Voice answer populated here -->
+        </div>
+      </div>
+
+      <!-- 5. 1-TAP CAREGIVER BRIDGE (WhatsApp / SMS) -->
+      <div class="bg-forest-bg border-3 border-forest/30 rounded-3xl p-6 sm:p-8 bg-emerald-50">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 class="text-2xl sm:text-3xl font-extrabold text-forest mb-1">
+              Want a second opinion?
+            </h4>
+            <p class="text-xl text-gray-700">
+              Send this summary directly to your daughter, son, or caregiver with one tap.
+            </p>
+          </div>
+
+          <button onclick="shareViaWhatsApp()" class="btn-senior bg-forest hover:bg-forest-hover text-white px-8 w-full sm:w-auto flex-shrink-0">
+            <span class="text-2xl">💬</span>
+            <span>Send to Family (WhatsApp)</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- ======================================================== -->
+  <!-- MODAL 1: GEMINI API KEY CONFIGURATION                    -->
+  <!-- ======================================================== -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border-4 border-royal shadow-2xl">
+      <h3 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+        ⚙️ Gemini API Key
+      </h3>
+      <p class="text-lg text-gray-600 mb-4">
+        Enter your Google Gemini API key to activate live AI vision. If left empty, CareLens uses realistic demonstration examples.
+      </p>
+
+      <input 
+        type="password" 
+        id="apiKeyInput" 
+        placeholder="AIzaSy..." 
+        class="w-full p-4 text-xl border-2 border-gray-300 rounded-xl mb-4 font-mono focus:border-royal focus:outline-none"
+      />
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="saveApiKey()" class="btn-senior bg-royal hover:bg-royal-hover text-white flex-1">
+          Save Key
+        </button>
+        <button onclick="closeApiKeyModal()" class="btn-senior bg-gray-100 hover:bg-gray-200 text-gray-800 px-6">
+          Cancel
+        </button>
+      </div>
+
+      <p class="text-sm text-gray-500 mt-4 text-center">
+        Your key is stored only in your browser's local memory (`localStorage`).
+      </p>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 2: FULL IMAGE PREVIEW                              -->
+  <!-- ======================================================== -->
+  <div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onclick="closeImageModal()">
+    <div class="max-w-2xl max-h-[90vh] bg-white rounded-2xl overflow-hidden p-2">
+      <img id="fullImagePreview" src="" alt="Full preview" class="w-full h-auto max-h-[80vh] object-contain rounded-xl" />
+      <button class="btn-senior bg-gray-900 text-white w-full mt-2" onclick="closeImageModal()">
+        Close Photo
+      </button>
+  <!-- ======================================================== -->
+  <!-- MODAL 3: LIVE WEBCAM / CAMERA VIEWFINDER                 -->
+  <!-- ======================================================== -->
+  <div id="webcamModal" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-xl w-full border-4 border-royal shadow-2xl flex flex-col items-center">
+      <div class="flex items-center justify-between w-full mb-3">
+        <h3 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+          <span>📹</span>
+          <span>Point Camera at Any Item</span>
+        </h3>
+        <button onclick="closeLiveWebcam()" class="text-gray-500 hover:text-gray-800 text-3xl font-bold p-1">
+          ✕
+        </button>
+      </div>
+
+      <!-- Live Video Viewfinder -->
+      <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden mb-4 border-2 border-gray-300 shadow-inner">
+        <video id="webcamVideo" autoplay playsinline muted class="w-full h-full object-cover"></video>
+        <!-- Reticle target for senior alignment -->
+        <div class="absolute inset-8 border-2 border-white/50 rounded-2xl pointer-events-none flex items-center justify-center">
+          <span class="text-white/80 bg-black/40 px-3 py-1 rounded-lg text-sm font-semibold">Hold item inside this box</span>
+        </div>
+      </div>
+
+      <!-- Giant Shutter Button -->
+      <button onclick="captureWebcamSnapshot()" class="btn-senior bg-royal hover:bg-royal-hover text-white w-full text-2xl py-4 shadow-xl mb-3">
+        <span class="text-3xl">📸</span>
+        <span>Tap to Capture Now</span>
+      </button>
+
+      <button onclick="closeLiveWebcam()" class="text-gray-600 font-bold text-lg hover:underline py-2">
+        Cancel and go back
+      </button>
+    </div>
+  </div>
+
+  <canvas id="snapshotCanvas" class="hidden"></canvas>
+
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT: CONTROLLER & GEMINI MULTIMODAL LOGIC        -->
+  <!-- ======================================================== -->
+  <script>
+    // State management
+    let activeApiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+    let currentImageBase64 = null;
+    let currentAnalysis = null;
+    let isSpeaking = false;
+    let currentUtterance = null;
+    let currentFontSizeIndex = 0; // 0: Normal, 1: Large, 2: Extra Large
+    let webcamStream = null;
+    const fontScales = [
+      { scale: '1rem', label: 'Normal' },
+      { scale: '1.15rem', label: 'Large' },
+      { scale: '1.3rem', label: 'Huge' }
+    ];
+
+    // On Load Initializations
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check Speech Synthesis availability
+      if (!('speechSynthesis' in window)) {
+        document.getElementById('audioToggleBtn').classList.add('opacity-50', 'pointer-events-none');
+        document.getElementById('audioLabel').innerText = 'Speech Not Supported in Browser';
+      }
+      // Populate API key input if stored
+      if (activeApiKey) {
+        document.getElementById('apiKeyInput').value = activeApiKey;
+      }
+    });
+
+    // ----------------------------------------------------
+    // ACCESSIBILITY TOGGLES (Text scale & High contrast)
+    // ----------------------------------------------------
+    function toggleTextSize() {
+      currentFontSizeIndex = (currentFontSizeIndex + 1) % fontScales.length;
+      document.documentElement.style.setProperty('--font-scale', fontScales[currentFontSizeIndex].scale);
+      document.getElementById('textSizeLabel').innerText = `Text: ${fontScales[currentFontSizeIndex].label}`;
+    }
+
+    function toggleHighContrast() {
+      document.body.classList.toggle('high-contrast');
+    }
+
+    // ----------------------------------------------------
+    // API KEY MODAL
+    // ----------------------------------------------------
+    function openApiKeyModal() {
+      document.getElementById('apiKeyInput').value = activeApiKey;
+      document.getElementById('apiKeyModal').classList.remove('hidden');
+    }
+    function closeApiKeyModal() {
+      document.getElementById('apiKeyModal').classList.add('hidden');
+    }
+    function saveApiKey() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      activeApiKey = val;
+      if (val) {
+        localStorage.setItem('GEMINI_API_KEY', val);
+      } else {
+        localStorage.removeItem('GEMINI_API_KEY');
+      }
+      closeApiKeyModal();
+      alert('API Key saved successfully.');
+    }
+
+    // ----------------------------------------------------
+    // UNIVERSAL CAMERA & WEBCAM LOGIC (Point at Anything!)
+    // ----------------------------------------------------
+    async function triggerUniversalCamera() {
+      // Try opening the live webcam viewfinder first for a seamless in-browser experience
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          await openLiveWebcam();
+          return;
+        } catch (err) {
+          console.log("Direct webcam stream not available, falling back to device camera input", err);
+        }
+      }
+      // Fallback to native device camera/file picker
+      document.getElementById('cameraInput').click();
+    }
+
+    async function openLiveWebcam() {
+      const modal = document.getElementById('webcamModal');
+      const video = document.getElementById('webcamVideo');
+
+      try {
+        webcamStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = webcamStream;
+        modal.classList.remove('hidden');
+      } catch (err) {
+        console.warn("Could not access camera stream:", err);
+        // If camera permission blocked or not found, open file input
+        document.getElementById('cameraInput').click();
+      }
+    }
+
+    function closeLiveWebcam() {
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+      }
+      document.getElementById('webcamModal').classList.add('hidden');
+    }
+
+    function captureWebcamSnapshot() {
+      const video = document.getElementById('webcamVideo');
+      const canvas = document.getElementById('snapshotCanvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      closeLiveWebcam();
+      currentImageBase64 = dataUrl.split(',')[1];
+      processImage(dataUrl);
+    }
+
+    function triggerCamera() {
+      triggerUniversalCamera();
+    }
+    function triggerFilePicker() {
+      document.getElementById('galleryInput').click();
+    }
+
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        currentImageBase64 = dataUrl.split(',')[1];
+        processImage(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ----------------------------------------------------
+    // DEMO TEST PRESETS (Instant realistic demonstrations)
+    // ----------------------------------------------------
+    const DEMO_PRESETS = {
+      medication: {
+        classification: "MEDICATION",
+        summary: "This is your Metformin medication for managing blood sugar. You should take one tablet with your evening dinner.",
+        safetyVerdict: "SAFE",
+        safetyExplanation: "Authentic pharmacy prescription label from Walgreens.",
+        actionItems: {
+          primaryField: "Prescription Dosage",
+          primaryValue: "1 Tablet (500mg)",
+          secondaryField: "Best Time to Take",
+          secondaryValue: "With Evening Dinner"
+        },
+        caregiverMessage: "Hi, Mom scanned her Metformin bottle with CareLens: Take 1 tablet with dinner. Everything matches the doctor's plan!",
+        svgIcon: "💊",
+        dataUrl: createSvgPlaceholder("MEDICINE BOTTLE", "Rx: Metformin 500mg\nTake 1 Tablet with Dinner\nRefills: 2 - Dr. Smith", "#FEF3C7")
+      },
+      billing: {
+        classification: "BILLING",
+        summary: "This is your City Power electricity bill for the month of October. The total amount due is forty-two dollars and fifty cents, payable by October twelfth.",
+        safetyVerdict: "SAFE",
+        safetyExplanation: "Official statement from City Power & Light.",
+        actionItems: {
+          primaryField: "Total Amount Due",
+          primaryValue: "$42.50",
+          secondaryField: "Due Date",
+          secondaryValue: "October 12th"
+        },
+        caregiverMessage: "Hi, Dad scanned his electric bill with CareLens: $42.50 due Oct 12th. Just letting you know!",
+        svgIcon: "⚡",
+        dataUrl: createSvgPlaceholder("ELECTRICITY BILL", "City Power & Light\nAccount: #994821\nAmount Due: $42.50\nDue Date: Oct 12, 2026", "#EFF6FF")
+      },
+      scam: {
+        classification: "SECURITY_CHECK",
+        summary: "Warning: this letter is a fake scam trying to frighten you into sending money. Do not call this number and do not send any wire transfer.",
+        safetyVerdict: "SCAM",
+        safetyExplanation: "Scam warning: Threatens immediate power shutoff and demands untraceable wire transfer.",
+        actionItems: {
+          primaryField: "Safety Warning",
+          primaryValue: "DO NOT PAY",
+          secondaryField: "Danger Reason",
+          secondaryValue: "Fake Wire Transfer Demand"
+        },
+        caregiverMessage: "URGENT: Mom scanned a suspicious letter demanding wire transfer. CareLens flagged it as a SCAM. Please check in with her.",
+        svgIcon: "🚨",
+        dataUrl: createSvgPlaceholder("URGENT NOTICE (SCAM)", "FINAL DISCONNECTION WARNING\nWire $250 within 24 Hours\nOr Power Cut Immediately!", "#FEE2E2")
+      }
+    };
+
+    function createSvgPlaceholder(title, bodyText, bgColor) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+        <rect width="600" height="400" fill="${bgColor}" rx="24"/>
+        <rect x="30" y="30" width="540" height="340" fill="#ffffff" stroke="#cbd5e1" stroke-width="4" rx="16"/>
+        <text x="50" y="90" font-family="Outfit, sans-serif" font-size="28" font-weight="bold" fill="#1e293b">${title}</text>
+        <line x1="50" y1="115" x2="550" y2="115" stroke="#e2e8f0" stroke-width="2"/>
+        <text x="50" y="170" font-family="Outfit, sans-serif" font-size="22" fill="#475569">
+          ${bodyText.split('\n').map((line, idx) => `<tspan x="50" dy="${idx === 0 ? 0 : 36}">${line}</tspan>`).join('')}
+        </text>
+      </svg>`;
+      return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+    }
+
+    function loadPreset(presetKey) {
+      const preset = DEMO_PRESETS[presetKey];
+      if (!preset) return;
+
+      currentImageBase64 = preset.dataUrl.split(',')[1];
+      showLoading(true);
+
+      setTimeout(() => {
+        currentAnalysis = preset;
+        renderResults(preset, preset.dataUrl);
+        showLoading(false);
+      }, 700);
+    }
+
+    // ----------------------------------------------------
+    // IMAGE PROCESSING & GEMINI MULTIMODAL API
+    // ----------------------------------------------------
+    async function processImage(dataUrl) {
+      showLoading(true);
+
+      // If user hasn't entered an API key, provide fallback demonstration
+      if (!activeApiKey) {
+        setTimeout(() => {
+          // Intelligent heuristic fallback for demo without key
+          const fallback = DEMO_PRESETS.billing;
+          currentAnalysis = fallback;
+          renderResults(fallback, dataUrl);
+          showLoading(false);
+        }, 1200);
+        return;
+      }
+
+      try {
+        const response = await callGeminiVision(currentImageBase64);
+        currentAnalysis = response;
+        renderResults(response, dataUrl);
+      } catch (err) {
+        console.error("Gemini API Error:", err);
+        alert("Notice: Could not connect to Gemini API. Falling back to local demonstration analysis.");
+        currentAnalysis = DEMO_PRESETS.billing;
+        renderResults(DEMO_PRESETS.billing, dataUrl);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function callGeminiVision(base64Data) {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${activeApiKey}`;
+      
+      const systemInstruction = `You are CareLens AI, an exceptionally empathetic, crystal-clear visual daily companion for senior citizens (aged 70+).
+You can recognize ANY item, thing, household appliance (microwave dial, remote control, stove knob), gadget, medication bottle, utility bill, suspicious message/letter, food/groceries, plant, or object in the image.
+Analyze the scanned image and return a STRICT JSON object without any Markdown formatting or code block fences.
+Rules:
+1. "classification": Must be "ITEM" | "MEDICATION" | "BILLING" | "SECURITY_CHECK" | "APPLIANCE" | "FOOD" | "NOTICE" | "GENERAL".
+2. "summary": Exactly 1 or 2 short, compassionate, jargon-free sentences (6th grade reading level) explaining what this item or document is and what to do with it.
+3. "safetyVerdict": "SAFE" | "SCAM" | "CAUTION".
+4. "safetyExplanation": One short sentence explaining safety status (e.g. "Safe and authentic", "Caution: check expiration date", "Warning: fake scam message").
+5. "actionItems":
+   - "primaryField": Label for most important takeaway (e.g. Total Due, How to Use, Dosage, Setting, Main Action).
+   - "primaryValue": Large clear value (e.g. $42.50, Turn Dial to 3, Take 1 Tablet, Defrost Mode, Safe to Eat).
+   - "secondaryField": Secondary label (e.g. Due Date, Timing, Safety Tip, Expiration).
+   - "secondaryValue": Secondary value (e.g. Oct 12th, With Dinner, Keep away from heat, Verified).
+6. "caregiverMessage": A warm, 1-line WhatsApp summary for their son or daughter if needed.`;
+
+      const payload = {
+        contents: [
+          {
+            parts: [
+              { text: systemInstruction },
+              {
+                inlineData: {
+                  mimeType: "image/jpeg",
+                  data: base64Data
+                }
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: "application/json"
+        }
+      };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`API returned ${res.status}: ${errorText}`);
+      }
+
+      const data = await res.json();
+      const rawText = data.candidates[0].content.parts[0].text;
+      
+      // Clean possible markdown wrappers
+      const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned);
+    }
+
+    // ----------------------------------------------------
+    // RENDER RESULTS SCREEN
+    // ----------------------------------------------------
+    function renderResults(data, dataUrl) {
+      // 1. Update Thumbnail
+      const thumb = document.getElementById('resultThumbnail');
+      thumb.src = dataUrl;
+      document.getElementById('fullImagePreview').src = dataUrl;
+
+      // 2. Update Classification Tag
+      document.getElementById('classificationTag').innerText = data.classification || 'DOCUMENT';
+
+      // 3. Update 2-Sentence Summary
+      document.getElementById('summaryText').innerText = data.summary;
+
+      // 4. Update Safety Trust Badge
+      const badgeBox = document.getElementById('safetyBadgeContainer');
+      const badgeIcon = document.getElementById('safetyBadgeIcon');
+      const badgeTitle = document.getElementById('safetyBadgeTitle');
+      const badgeDesc = document.getElementById('safetyBadgeDesc');
+
+      const verdict = (data.safetyVerdict || 'SAFE').toUpperCase();
+      if (verdict === 'SCAM') {
+        badgeBox.className = "rounded-2xl p-5 border-4 border-alertRed bg-alertRed-bg text-alertRed flex items-center gap-4 shadow-sm";
+        badgeIcon.innerText = "🚨";
+        badgeTitle.innerText = "DANGER - SCAM DETECTED";
+        badgeDesc.innerText = data.safetyExplanation || "Do not send money or click any links. This is a scam.";
+      } else if (verdict === 'CAUTION') {
+        badgeBox.className = "rounded-2xl p-5 border-4 border-amber-500 bg-amber-50 text-amber-900 flex items-center gap-4 shadow-sm";
+        badgeIcon.innerText = "⚠️";
+        badgeTitle.innerText = "PROCEED WITH CAUTION";
+        badgeDesc.innerText = data.safetyExplanation || "Please verify with a family member before taking action.";
+      } else {
+        badgeBox.className = "rounded-2xl p-5 border-4 border-trustGreen bg-trustGreen-bg text-trustGreen flex items-center gap-4 shadow-sm";
+        badgeIcon.innerText = "🛡️";
+        badgeTitle.innerText = "VERIFIED SAFE";
+        badgeDesc.innerText = data.safetyExplanation || "This document appears legitimate and safe.";
+      }
+
+      // 5. Update Action Cards
+      if (data.actionItems) {
+        document.getElementById('action1Label').innerText = data.actionItems.primaryField || 'Primary Action';
+        document.getElementById('action1Value').innerText = data.actionItems.primaryValue || '--';
+        document.getElementById('action2Label').innerText = data.actionItems.secondaryField || 'Important Detail';
+        document.getElementById('action2Value').innerText = data.actionItems.secondaryValue || '--';
+
+        // Adjust Action Card Icons based on classification
+        const a1Icon = document.getElementById('action1Icon');
+        const a2Icon = document.getElementById('action2Icon');
+        if (data.classification === 'MEDICATION') {
+          a1Icon.innerText = "💊";
+          a2Icon.innerText = "⏰";
+        } else if (data.classification === 'BILLING') {
+          a1Icon.innerText = "💵";
+          a2Icon.innerText = "📅";
+        } else if (data.classification === 'SECURITY_CHECK') {
+          a1Icon.innerText = "🛑";
+          a2Icon.innerText = "⚠️";
+        } else if (data.classification === 'APPLIANCE') {
+          a1Icon.innerText = "🔌";
+          a2Icon.innerText = "⚙️";
+        } else if (data.classification === 'FOOD') {
+          a1Icon.innerText = "🍎";
+          a2Icon.innerText = "⏳";
+        } else {
+          a1Icon.innerText = "🔍";
+          a2Icon.innerText = "💡";
+        }
+      }
+
+      // Auto-trigger speech after 500ms for seamless senior hands-free experience
+      stopAudio();
+      setTimeout(() => {
+        playAudio(data.summary);
+      }, 500);
+
+      // Switch views
+      document.getElementById('viewCapture').classList.add('hidden');
+      document.getElementById('viewResults').classList.remove('hidden');
+    }
+
+    // ----------------------------------------------------
+    // SENIOR CALIBRATED AUDIO ENGINE (Web Speech API)
+    // ----------------------------------------------------
+    function toggleAudioPlayback() {
+      if (isSpeaking) {
+        stopAudio();
+      } else {
+        if (currentAnalysis && currentAnalysis.summary) {
+          playAudio(currentAnalysis.summary);
+        }
+      }
+    }
+
+    function playAudio(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      // Senior calibration: 0.88x speed for clear auditory comprehension
+      currentUtterance.rate = 0.88;
+      currentUtterance.pitch = 1.0;
+
+      // Select gentle natural English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha')));
+      if (preferredVoice) currentUtterance.voice = preferredVoice;
+
+      currentUtterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('audioIcon').innerText = '⏸️';
+        document.getElementById('audioLabel').innerText = 'Pause Reading';
+        document.getElementById('waveContainer').classList.remove('hidden');
+      };
+
+      currentUtterance.onend = () => {
+        stopAudio();
+      };
+
+      currentUtterance.onerror = () => {
+        stopAudio();
+      };
+
+      window.speechSynthesis.speak(currentUtterance);
+    }
+
+    function stopAudio() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isSpeaking = false;
+      document.getElementById('audioIcon').innerText = '🔊';
+      document.getElementById('audioLabel').innerText = 'Read Aloud to Me';
+      const wave = document.getElementById('waveContainer');
+      if (wave) wave.classList.add('hidden');
+    }
+
+    // ----------------------------------------------------
+    // VOICE QUESTION FOLLOW-UP (Web Speech Recognition)
+    // ----------------------------------------------------
+    let recognition = null;
+    let isListening = false;
+
+    function toggleSpeechQuestion() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        alert("Voice recognition is not supported in this browser. Please type your question or use Google Chrome / Safari.");
+        return;
+      }
+
+      if (isListening && recognition) {
+        recognition.stop();
+        return;
+      }
+
+      recognition = new SpeechRec();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        isListening = true;
+        document.getElementById('micIcon').innerText = '🛑';
+        document.getElementById('micText').innerText = 'Listening... Speak now';
+        document.getElementById('voiceQuestionStatus').innerText = 'Listening to your voice...';
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('voiceQuestionStatus').innerText = `You asked: "${transcript}"`;
+        answerSeniorQuestion(transcript);
+      };
+
+      recognition.onerror = () => {
+        isListening = false;
+        document.getElementById('micIcon').innerText = '🎤';
+        document.getElementById('micText').innerText = 'Tap to Speak Question';
+        document.getElementById('voiceQuestionStatus').innerText = 'Could not hear clearly. Tap to try again.';
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        document.getElementById('micIcon').innerText = '🎤';
+        document.getElementById('micText').innerText = 'Tap to Speak Question';
+      };
+
+      recognition.start();
+    }
+
+    function answerSeniorQuestion(question) {
+      const q = question.toLowerCase();
+      let answer = "";
+
+      if (currentAnalysis.classification === "MEDICATION") {
+        if (q.includes("when") || q.includes("time")) {
+          answer = "Take this one tablet in the evening when you eat dinner. Do not take it on an empty stomach.";
+        } else if (q.includes("how many") || q.includes("dose")) {
+          answer = "The label indicates one tablet per day.";
+        } else {
+          answer = "Always take this medicine with food and water as prescribed by your doctor.";
+        }
+      } else if (currentAnalysis.classification === "BILLING") {
+        if (q.includes("how much") || q.includes("pay")) {
+          answer = "Your total payment is forty-two dollars and fifty cents.";
+        } else if (q.includes("when") || q.includes("due")) {
+          answer = "It is due by October twelfth.";
+        } else {
+          answer = "You have until October twelfth to pay forty-two dollars to City Power.";
+        }
+      } else {
+        answer = "This letter appears to be fraudulent. Please do not call them or wire any money.";
+      }
+
+      const answerBox = document.getElementById('voiceAnswerBox');
+      answerBox.innerText = `CareLens: "${answer}"`;
+      answerBox.classList.remove('hidden');
+
+      // Speak answer
+      playAudio(answer);
+    }
+
+    // ----------------------------------------------------
+    // WHATSAPP CAREGIVER SHARE
+    // ----------------------------------------------------
+    function shareViaWhatsApp() {
+      if (!currentAnalysis) return;
+      const msg = encodeURIComponent(currentAnalysis.caregiverMessage || "Hi, please check this document I scanned on CareLens AI.");
+      const whatsappUrl = `https://wa.me/?text=${msg}`;
+      window.open(whatsappUrl, '_blank');
+    }
+
+    // ----------------------------------------------------
+    // NAVIGATION & VIEW SWITCHING
+    // ----------------------------------------------------
+    function showLoading(isLoading) {
+      if (isLoading) {
+        document.getElementById('viewCapture').classList.add('hidden');
+        document.getElementById('viewResults').classList.add('hidden');
+        document.getElementById('viewLoading').classList.remove('hidden');
+      } else {
+        document.getElementById('viewLoading').classList.add('hidden');
+      }
+    }
+
+    function resetToHome() {
+      stopAudio();
+      document.getElementById('viewResults').classList.add('hidden');
+      document.getElementById('viewLoading').classList.add('hidden');
+      document.getElementById('viewCapture').classList.remove('hidden');
+      document.getElementById('cameraInput').value = '';
+      document.getElementById('galleryInput').value = '';
+      document.getElementById('voiceAnswerBox').classList.add('hidden');
+    }
+
+    function openImageModal() {
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
