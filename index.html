@@ -521,6 +521,11 @@
     let currentUtterance = null;
     let currentFontSizeIndex = 0; // 0: Normal, 1: Large, 2: Extra Large
     let webcamStream = null;
+
+    // ✅ Single source of truth for Gemini model — update here if API changes
+    const GEMINI_MODEL = 'gemini-3.6-flash';
+    const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
+
     const fontScales = [
       { scale: '1rem', label: 'Normal' },
       { scale: '1.15rem', label: 'Large' },
@@ -589,7 +594,7 @@
       try {
         // Minimal test: send a tiny text-only request to verify the key works
         const testRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+          `${GEMINI_API_BASE}/${GEMINI_MODEL}:generateContent?key=${key}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -929,7 +934,7 @@
 
     // BUG FIX #3: mimeType now passed as parameter instead of hardcoded as jpeg
     async function callGeminiVision(base64Data, mimeType = 'image/jpeg') {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${activeApiKey}`;
+      const endpoint = `${GEMINI_API_BASE}/${GEMINI_MODEL}:generateContent?key=${activeApiKey}`;
       
       const systemInstruction = `You are CareLens AI, an exceptionally empathetic, crystal-clear visual daily companion for senior citizens (aged 70+).
 You can recognize ANY item, thing, household appliance (microwave dial, remote control, stove knob), gadget, medication bottle, utility bill, suspicious message/letter, food/groceries, plant, or object in the image.
