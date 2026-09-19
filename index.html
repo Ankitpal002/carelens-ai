@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#FBF9F5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>CareLens AI - Senior Daily Companion</title>
   
   <!-- Google Fonts: Outfit & Inter for Maximum Senior Legibility -->
@@ -16,6 +19,9 @@
     tailwind.config = {
       theme: {
         extend: {
+          screens: {
+            'xs': '420px',
+          },
           fontFamily: {
             sans: ['Outfit', 'Inter', 'sans-serif'],
           },
@@ -53,46 +59,70 @@
   </script>
 
   <style>
-    /* WCAG 2.2 AAA Senior Accessibility Rules */
+    /* WCAG 2.2 AAA Senior Accessibility & Mobile / iOS Viewport Rules */
     :root {
       --font-scale: 1rem;
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
     html {
       font-size: var(--font-scale);
       scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
     }
     body {
       background-color: #FBF9F5;
       color: #1E293B;
       font-family: 'Outfit', sans-serif;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
     }
-    /* Touch Target Strict Min 64px */
+    
+    /* Touch Target Strict Min 56px on mobile, 64px on tablet/desktop */
     .btn-senior {
-      min-height: 64px;
-      font-size: 1.25rem; /* 20px */
+      min-height: 56px;
+      font-size: 1.15rem;
       font-weight: 700;
-      border-radius: 1.15rem;
+      border-radius: 1rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
       transition: all 0.15s ease-in-out;
       box-shadow: 0 4px 14px rgba(30, 41, 59, 0.08);
       user-select: none;
+      touch-action: manipulation;
+    }
+    @media (min-width: 640px) {
+      .btn-senior {
+        min-height: 64px;
+        font-size: 1.25rem;
+        border-radius: 1.15rem;
+        gap: 0.75rem;
+      }
     }
     .btn-senior:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
     .btn-senior:focus-visible {
       outline: 4px solid #1E3A8A;
-      outline-offset: 4px;
+      outline-offset: 3px;
     }
 
     /* Sound wave animation */
     @keyframes soundwave {
       0%, 100% { height: 8px; }
-      50% { height: 28px; }
+      50% { height: 26px; }
     }
     .wave-bar {
       width: 4px;
@@ -103,6 +133,15 @@
     .wave-bar:nth-child(2) { animation-delay: 0.2s; }
     .wave-bar:nth-child(3) { animation-delay: 0.4s; }
     .wave-bar:nth-child(4) { animation-delay: 0.6s; }
+
+    /* Hide scrollbar for clean horizontal toolbars */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
     /* High contrast mode */
     body.high-contrast {
@@ -124,75 +163,78 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col transition-colors duration-200">
+<body class="transition-colors duration-200">
 
-  <!-- TOP ACCESSIBILITY & SETTINGS HEADER -->
-  <header class="bg-white border-b-2 border-linen-200 sticky top-0 z-40 px-4 py-3 shadow-sm">
-    <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+  <!-- TOP ACCESSIBILITY & SETTINGS HEADER (Responsive for iPhone/Android/Desktop) -->
+  <header class="bg-white border-b-2 border-linen-200 sticky top-0 z-40 px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm" style="padding-top: max(10px, env(safe-area-inset-top));">
+    <div class="max-w-4xl mx-auto flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3">
       
       <!-- Brand & Senior Badge -->
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-sapphire text-white flex items-center justify-center text-2xl shadow-md">
-          🔍
-        </div>
-        <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 leading-tight">
-            CareLens <span class="text-sapphire">AI</span>
-          </h1>
-          <p class="text-sm sm:text-base font-semibold text-sage flex items-center gap-1">
-            <span class="w-2.5 h-2.5 rounded-full bg-sage animate-pulse"></span>
-            <span data-i18n="seniorBadge">Senior Companion Mode Active</span>
-          </p>
+      <div class="flex items-center justify-between w-full xs:w-auto gap-2.5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sapphire text-white flex items-center justify-center text-xl sm:text-2xl shadow-md flex-shrink-0">
+            🔍
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900 leading-tight">
+              CareLens <span class="text-sapphire">AI</span>
+            </h1>
+            <p class="text-xs sm:text-sm font-semibold text-sage flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+              <span data-i18n="seniorBadge">Senior Companion Mode Active</span>
+            </p>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Accessibility Tools -->
-      <div class="flex items-center gap-2">
+      <!-- Quick Accessibility Tools Toolbar (Responsive flex row) -->
+      <div class="flex items-center justify-end gap-1.5 sm:gap-2 w-full xs:w-auto overflow-x-auto py-0.5 scrollbar-none">
+        
         <!-- Text Size Magnifier Toggle -->
-        <button id="textSizeBtn" onclick="toggleTextSize()" class="h-12 px-3 sm:px-4 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-lg hover:bg-linen-100 flex items-center gap-1.5" title="Increase Text Size" aria-label="Adjust font size">
+        <button id="textSizeBtn" onclick="toggleTextSize()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-base sm:text-lg hover:bg-linen-100 flex items-center gap-1 flex-shrink-0" title="Increase Text Size" aria-label="Adjust font size">
           <span>🔍</span>
-          <span id="textSizeLabel" class="hidden sm:inline text-base">Text: Normal</span>
+          <span id="textSizeLabel" class="hidden md:inline text-sm sm:text-base">Text: Normal</span>
         </button>
 
         <!-- Language Selector -->
-        <div class="relative flex items-center">
+        <div class="relative flex items-center flex-shrink-0">
           <select
             id="langSelector"
             onchange="onLanguageChange()"
-            class="h-12 pl-3 pr-8 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-semibold text-base focus:outline-none focus:border-sapphire cursor-pointer appearance-none shadow-sm"
+            class="h-10 sm:h-12 pl-2.5 pr-7 sm:pl-3 sm:pr-8 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-semibold text-xs sm:text-base focus:outline-none focus:border-sapphire cursor-pointer appearance-none shadow-sm max-w-[125px] sm:max-w-none truncate"
             title="Response Language"
             aria-label="Select response language"
           >
             <option value="English">🌐 English</option>
-            <option value="Hindi">🇮🇳 हिन्दी (Hindi)</option>
-            <option value="Marathi">🇮🇳 मराठी (Marathi)</option>
-            <option value="Tamil">🇮🇳 தமிழ் (Tamil)</option>
-            <option value="Telugu">🇮🇳 తెలుగు (Telugu)</option>
-            <option value="Bengali">🇮🇳 বাংলা (Bengali)</option>
-            <option value="Kannada">🇮🇳 ಕನ್ನಡ (Kannada)</option>
-            <option value="Malayalam">🇮🇳 മലയാളം (Malayalam)</option>
-            <option value="Gujarati">🇮🇳 ગુજરાતી (Gujarati)</option>
-            <option value="Punjabi">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
-            <option value="Urdu">🇮🇳 اردو (Urdu)</option>
-            <option value="Arabic">🌍 العربية (Arabic)</option>
-            <option value="Spanish">🌍 Español (Spanish)</option>
+            <option value="Hindi">🇮🇳 हिन्दी</option>
+            <option value="Marathi">🇮🇳 मराठी</option>
+            <option value="Tamil">🇮🇳 தமிழ்</option>
+            <option value="Telugu">🇮🇳 తెలుగు</option>
+            <option value="Bengali">🇮🇳 বাংলা</option>
+            <option value="Kannada">🇮🇳 ಕನ್ನಡ</option>
+            <option value="Malayalam">🇮🇳 മലയാളം</option>
+            <option value="Gujarati">🇮🇳 ગુજરાતી</option>
+            <option value="Punjabi">🇮🇳 ਪੰਜਾਬੀ</option>
+            <option value="Urdu">🇮🇳 اردو</option>
+            <option value="Arabic">🌍 العربية</option>
+            <option value="Spanish">🌍 Español</option>
           </select>
-          <span class="pointer-events-none absolute right-2 text-gray-500 text-sm">▾</span>
+          <span class="pointer-events-none absolute right-2 text-gray-500 text-xs sm:text-sm">▾</span>
         </div>
 
         <!-- High Contrast Mode Toggle -->
-        <button id="contrastBtn" onclick="toggleHighContrast()" class="h-12 w-12 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-xl flex items-center justify-center hover:bg-linen-100" title="High Contrast Mode" aria-label="Toggle High Contrast">
+        <button id="contrastBtn" onclick="toggleHighContrast()" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-lg sm:text-xl flex items-center justify-center hover:bg-linen-100 flex-shrink-0" title="High Contrast Mode" aria-label="Toggle High Contrast">
           🌓
         </button>
 
         <!-- WhatsApp Settings -->
-        <button onclick="openWhatsAppModal()" class="h-12 px-3 sm:px-4 rounded-xl border-2 border-green-600 text-green-700 font-bold text-base hover:bg-green-50 flex items-center gap-1.5" title="Set Caregiver WhatsApp Number">
+        <button onclick="openWhatsAppModal()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-green-600 text-green-700 font-bold text-sm sm:text-base hover:bg-green-50 flex items-center gap-1 flex-shrink-0" title="Set Caregiver WhatsApp Number">
           <span>💬</span>
           <span class="hidden md:inline" data-i18n="whatsappBtn">WhatsApp</span>
         </button>
 
         <!-- Gemini API Key Modal Trigger -->
-        <button onclick="openApiKeyModal()" class="h-12 px-3 sm:px-4 rounded-xl border-2 border-sapphire text-sapphire font-bold text-base hover:bg-blue-50 flex items-center gap-1.5" title="Configure API Key">
+        <button onclick="openApiKeyModal()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-sapphire text-sapphire font-bold text-sm sm:text-base hover:bg-blue-50 flex items-center gap-1 flex-shrink-0" title="Configure API Key">
           <span>🔑</span>
           <span class="hidden md:inline" data-i18n="apiKeyBtn">API Key</span>
         </button>
@@ -201,64 +243,64 @@
   </header>
 
   <!-- MAIN APPLICATION CONTAINER -->
-  <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+  <main class="flex-1 max-w-4xl w-full mx-auto p-3.5 sm:p-6 flex flex-col justify-center" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
 
     <!-- ======================================================== -->
     <!-- VIEW 1: CAPTURE / UPLOAD SCREEN                          -->
     <!-- ======================================================== -->
-    <div id="viewCapture" class="flex flex-col gap-6">
+    <div id="viewCapture" class="flex flex-col gap-4 sm:gap-6">
       
       <!-- Friendly Greeting Banner -->
-      <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-linen-200 shadow-sm text-center">
-        <h2 data-i18n="heroTitle" class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
+      <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 border-linen-200 shadow-sm text-center">
+        <h2 data-i18n="heroTitle" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 leading-tight">
           Point at Anything — CareLens Explains It!
         </h2>
-        <p data-i18n="heroDesc" class="text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p data-i18n="heroDesc" class="text-base sm:text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
           Point your camera at <strong>any item, medicine bottle, paper bill, appliance dial, food, or letter</strong>. Tap one button and CareLens will speak what it is and what to do.
         </p>
       </div>
 
       <!-- Real-Time AI Status Banner -->
-      <div id="aiStatusCard" class="rounded-2xl p-4 sm:p-5 border-3 border-amber-400 bg-amber-50 text-amber-950 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-        <div class="flex items-center gap-3">
-          <span id="aiStatusDot" class="w-4 h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0"></span>
+      <div id="aiStatusCard" class="rounded-2xl p-3.5 sm:p-5 border-3 border-amber-400 bg-amber-50 text-amber-950 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <span id="aiStatusDot" class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0"></span>
           <div>
-            <p id="aiStatusTitle" class="text-xl font-extrabold text-gray-900">
+            <p id="aiStatusTitle" class="text-base sm:text-xl font-extrabold text-gray-900">
               Live AI Status: API Key Needed for Real Image Analysis
             </p>
-            <p id="aiStatusSubtitle" class="text-base text-gray-600">
+            <p id="aiStatusSubtitle" class="text-xs sm:text-base text-gray-600">
               To analyze real photos with Google Gemini AI, please enter your free API key.
             </p>
           </div>
         </div>
-        <button onclick="openApiKeyModal()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-5 min-h-[48px] text-lg flex-shrink-0">
+        <button onclick="openApiKeyModal()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-4 sm:px-5 min-h-[44px] sm:min-h-[48px] text-base sm:text-lg w-full sm:w-auto flex-shrink-0">
           <span data-i18n="setApiKeyBtn">🔑 Set API Key</span>
         </button>
       </div>
 
-      <!-- THE SINGLE UNIVERSAL ACTION BUTTON (Giant 50% Viewport Shutter) -->
+      <!-- THE SINGLE UNIVERSAL ACTION BUTTON (Giant Viewport Shutter) -->
       <div 
         id="cameraDropzone"
         onclick="openLiveWebcam()"
-        class="bg-white hover:bg-blue-50/50 border-4 border-dashed border-sapphire/60 hover:border-sapphire rounded-3xl p-8 sm:p-14 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[300px] sm:min-h-[360px] shadow-xl group"
+        class="bg-white hover:bg-blue-50/50 border-4 border-dashed border-sapphire/60 hover:border-sapphire rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[240px] sm:min-h-[300px] md:min-h-[340px] shadow-xl group"
         role="button"
         tabindex="0"
         aria-label="Tap to open camera and point at anything"
       >
         <!-- Shutter Camera Icon -->
-        <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-sapphire text-white flex items-center justify-center text-5xl sm:text-7xl mb-5 group-hover:scale-105 transition-transform shadow-lg">
+        <div class="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-full bg-sapphire text-white flex items-center justify-center text-4xl sm:text-6xl md:text-7xl mb-3 sm:mb-5 group-hover:scale-105 transition-transform shadow-lg">
           📸
         </div>
-        <span data-i18n="cameraBtnTitle" class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
+        <span data-i18n="cameraBtnTitle" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-1.5 leading-tight">
           Tap Here to Open Camera
         </span>
-        <span data-i18n="cameraBtnSub" class="text-xl sm:text-2xl text-sapphire font-semibold">
+        <span data-i18n="cameraBtnSub" class="text-base sm:text-xl md:text-2xl text-sapphire font-semibold">
           Opens live camera viewfinder to scan anything
         </span>
       </div>
 
       <!-- Quick Upload from Device -->
-      <div class="flex flex-col sm:flex-row gap-4">
+      <div class="flex flex-col sm:flex-row gap-3">
         <button 
           onclick="triggerFilePicker()" 
           class="btn-senior bg-white hover:bg-linen-50 text-gray-800 border-2 border-linen-300 w-full"
@@ -272,20 +314,20 @@
       <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleFileSelected(event)" />
 
       <!-- COLLAPSIBLE DEMO TEST SAMPLES -->
-      <div class="border border-linen-300 bg-white rounded-2xl p-4 mt-2 shadow-sm">
+      <div class="border border-linen-300 bg-white rounded-2xl p-3.5 sm:p-4 mt-1 shadow-sm">
         <details class="cursor-pointer">
-          <summary class="text-lg font-bold text-gray-700 flex items-center justify-between select-none">
+          <summary class="text-base sm:text-lg font-bold text-gray-700 flex items-center justify-between select-none">
             <span data-i18n="sampleTitle">💡 Testing without a physical object? Try quick sample images</span>
-            <span data-i18n="sampleClick" class="text-sm font-semibold text-sapphire">Click to expand</span>
+            <span data-i18n="sampleClick" class="text-xs sm:text-sm font-semibold text-sapphire flex-shrink-0 ml-2">Click to expand</span>
           </summary>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 pt-3 border-t border-linen-200">
-            <button onclick="loadPreset('medication')" class="btn-senior bg-linen-50 hover:bg-amber-50 text-amber-900 border border-amber-300 text-base py-2 px-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-3 pt-3 border-t border-linen-200">
+            <button onclick="loadPreset('medication')" class="btn-senior bg-linen-50 hover:bg-amber-50 text-amber-900 border border-amber-300 text-sm sm:text-base py-2 px-3 min-h-[48px]">
               <span data-i18n="sampleMed">💊 Medicine Bottle</span>
             </button>
-            <button onclick="loadPreset('billing')" class="btn-senior bg-linen-50 hover:bg-blue-50 text-blue-900 border border-blue-300 text-base py-2 px-3">
+            <button onclick="loadPreset('billing')" class="btn-senior bg-linen-50 hover:bg-blue-50 text-blue-900 border border-blue-300 text-sm sm:text-base py-2 px-3 min-h-[48px]">
               <span data-i18n="sampleBill">⚡ Electric Bill</span>
             </button>
-            <button onclick="loadPreset('scam')" class="btn-senior bg-linen-50 hover:bg-red-50 text-red-900 border border-red-300 text-base py-2 px-3">
+            <button onclick="loadPreset('scam')" class="btn-senior bg-linen-50 hover:bg-red-50 text-red-900 border border-red-300 text-sm sm:text-base py-2 px-3 min-h-[48px]">
               <span data-i18n="sampleScam">🚨 Suspicious Letter</span>
             </button>
           </div>
@@ -298,12 +340,12 @@
     <!-- ======================================================== -->
     <!-- VIEW 2: LOADING SPINNER (Calm, Reassuring for Seniors)   -->
     <!-- ======================================================== -->
-    <div id="viewLoading" class="hidden flex-col items-center justify-center py-16 px-4 text-center">
-      <div class="w-24 h-24 border-8 border-sapphire/20 border-t-sapphire rounded-full animate-spin mb-6"></div>
-      <h3 data-i18n="loadingTitle" class="text-3xl font-extrabold text-gray-900 mb-3">
+    <div id="viewLoading" class="hidden flex-col items-center justify-center py-12 sm:py-16 px-4 text-center">
+      <div class="w-16 h-16 sm:w-24 sm:h-24 border-6 sm:border-8 border-sapphire/20 border-t-sapphire rounded-full animate-spin mb-4 sm:mb-6"></div>
+      <h3 data-i18n="loadingTitle" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 sm:mb-3">
         Analyzing Your Photo...
       </h3>
-      <p id="loadingMessage" data-i18n="loadingDesc" class="text-2xl text-gray-600 max-w-md">
+      <p id="loadingMessage" data-i18n="loadingDesc" class="text-lg sm:text-2xl text-gray-600 max-w-md">
         Please give CareLens just a moment. We are sending this to Gemini AI to analyze it for you.
       </p>
     </div>
@@ -312,97 +354,97 @@
     <!-- ======================================================== -->
     <!-- VIEW 3: RESULTS SCREEN                                   -->
     <!-- ======================================================== -->
-    <div id="viewResults" class="hidden flex-col gap-6">
+    <div id="viewResults" class="hidden flex-col gap-4 sm:gap-6">
 
       <!-- Top Action Bar: Re-Scan + Image Preview -->
-      <div class="flex items-center justify-between gap-3 bg-white p-4 rounded-2xl border-2 border-linen-200 shadow-sm">
-        <button onclick="resetToHome()" class="btn-senior bg-linen-100 hover:bg-linen-200 text-gray-800 px-5 min-h-[52px] text-lg">
+      <div class="flex items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border-2 border-linen-200 shadow-sm">
+        <button onclick="resetToHome()" class="btn-senior bg-linen-100 hover:bg-linen-200 text-gray-800 px-4 sm:px-5 min-h-[48px] sm:min-h-[52px] text-base sm:text-lg">
           <span data-i18n="scanAnotherBtn">⬅️ Scan Another</span>
         </button>
-        <div class="flex items-center gap-3">
-          <img id="resultThumbnail" src="" alt="Thumbnail of scanned document" class="w-14 h-14 object-cover rounded-xl border-2 border-linen-300 shadow-sm cursor-pointer" onclick="openImageModal()" />
-          <span data-i18n="photoCaptured" class="text-base text-gray-500 font-semibold hidden sm:inline">Photo captured</span>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <img id="resultThumbnail" src="" alt="Thumbnail of scanned document" class="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl border-2 border-linen-300 shadow-sm cursor-pointer" onclick="openImageModal()" />
+          <span data-i18n="photoCaptured" class="text-xs sm:text-base text-gray-500 font-semibold hidden xs:inline">Photo captured</span>
         </div>
       </div>
 
       <!-- 1. SAFETY TRUST BADGE (WCAG 2.2 AAA High Contrast) -->
-      <div id="safetyBadgeContainer" class="rounded-2xl p-5 border-4 flex items-center gap-4 shadow-sm bg-sage-light border-sage text-sage">
-        <div id="safetyBadgeIcon" class="text-5xl flex-shrink-0">🛡️</div>
+      <div id="safetyBadgeContainer" class="rounded-2xl p-4 sm:p-5 border-4 flex items-center gap-3 sm:gap-4 shadow-sm bg-sage-light border-sage text-sage">
+        <div id="safetyBadgeIcon" class="text-4xl sm:text-5xl flex-shrink-0">🛡️</div>
         <div>
-          <div id="safetyBadgeTitle" class="text-2xl sm:text-3xl font-extrabold uppercase tracking-wide">
+          <div id="safetyBadgeTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight">
             VERIFIED SAFE
           </div>
-          <p id="safetyBadgeDesc" class="text-xl sm:text-2xl font-medium mt-1">
+          <p id="safetyBadgeDesc" class="text-base sm:text-xl md:text-2xl font-medium mt-0.5 sm:mt-1">
             This notice is authentic and safe to follow.
           </p>
         </div>
       </div>
 
       <!-- 2. "EXPLAIN LIKE I'M 75" 2-SENTENCE SUMMARY BOX -->
-      <div class="bg-white rounded-3xl p-6 sm:p-8 border-3 border-linen-300 shadow-md">
+      <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-3 border-linen-300 shadow-md">
         <div class="flex items-center justify-between mb-3">
-          <span data-i18n="plainSummaryBadge" class="text-sm font-extrabold uppercase tracking-wider text-sapphire bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200">
+          <span data-i18n="plainSummaryBadge" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-sapphire bg-blue-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-blue-200">
             Plain Language Summary
           </span>
-          <span id="classificationTag" class="text-sm font-bold bg-linen-100 text-gray-700 px-3 py-1.5 rounded-lg">
+          <span id="classificationTag" class="text-xs sm:text-sm font-bold bg-linen-100 text-gray-700 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg">
             DOCUMENT
           </span>
         </div>
 
-        <p id="summaryText" class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-relaxed mb-6">
+        <p id="summaryText" class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 leading-relaxed mb-5 sm:mb-6">
           This is an electric bill from City Power for the month of October. You need to pay forty-two dollars by October twelfth.
         </p>
 
         <!-- STICKY / FLOATING AUDIO VOICE PLAYER (Calibrated for Seniors ~0.88x) -->
-        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div class="flex items-center gap-3 text-sapphire">
-            <div id="waveContainer" class="hidden flex items-center gap-1 h-8">
+        <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+          <div class="flex items-center gap-2.5 sm:gap-3 text-sapphire w-full sm:w-auto">
+            <div id="waveContainer" class="hidden flex items-center gap-1 h-6 sm:h-8 flex-shrink-0">
               <span class="wave-bar"></span>
               <span class="wave-bar"></span>
               <span class="wave-bar"></span>
               <span class="wave-bar"></span>
             </div>
             <div>
-              <p data-i18n="voiceCompanion" class="font-bold text-lg sm:text-xl text-sapphire">Voice Audio Companion</p>
-              <p data-i18n="voicePace" class="text-sm text-gray-600 font-medium">Gentle pace (0.88x speed) for easy listening</p>
+              <p data-i18n="voiceCompanion" class="font-bold text-base sm:text-xl text-sapphire">Voice Audio Companion</p>
+              <p data-i18n="voicePace" class="text-xs sm:text-sm text-gray-600 font-medium">Gentle pace (0.88x speed) for easy listening</p>
             </div>
           </div>
 
-          <button id="audioToggleBtn" onclick="toggleAudioPlayback()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white w-full sm:w-auto px-8 shadow-md">
-            <span id="audioIcon" class="text-2xl">🔊</span>
+          <button id="audioToggleBtn" onclick="toggleAudioPlayback()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white w-full sm:w-auto px-6 sm:px-8 shadow-md">
+            <span id="audioIcon" class="text-xl sm:text-2xl">🔊</span>
             <span id="audioLabel" data-i18n="readAloud">Read Aloud to Me</span>
           </button>
         </div>
       </div>
 
-      <!-- 3. EXTRACTED ACTION CARDS (Massive 28px+ typography) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- 3. EXTRACTED ACTION CARDS (Fluid responsive typography) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         
         <!-- Primary Action Card -->
-        <div class="bg-white rounded-2xl p-6 border-2 border-linen-200 shadow-sm flex items-center gap-4">
-          <div id="action1Icon" class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-3xl flex-shrink-0">
+        <div class="bg-white rounded-2xl p-4 sm:p-6 border-2 border-linen-200 shadow-sm flex items-center gap-3 sm:gap-4">
+          <div id="action1Icon" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
             💵
           </div>
-          <div>
-            <p id="action1Label" class="text-lg font-bold text-gray-500 uppercase tracking-wider">
+          <div class="min-w-0 flex-1">
+            <p id="action1Label" class="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-wider truncate">
               Total Amount Due
             </p>
-            <p id="action1Value" class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-0.5">
+            <p id="action1Value" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mt-0.5 break-words">
               $42.50
             </p>
           </div>
         </div>
 
         <!-- Secondary Action Card -->
-        <div class="bg-white rounded-2xl p-6 border-2 border-linen-200 shadow-sm flex items-center gap-4">
-          <div id="action2Icon" class="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-3xl flex-shrink-0">
+        <div class="bg-white rounded-2xl p-4 sm:p-6 border-2 border-linen-200 shadow-sm flex items-center gap-3 sm:gap-4">
+          <div id="action2Icon" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
             📅
           </div>
-          <div>
-            <p id="action2Label" class="text-lg font-bold text-gray-500 uppercase tracking-wider">
+          <div class="min-w-0 flex-1">
+            <p id="action2Label" class="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-wider truncate">
               Due Date
             </p>
-            <p id="action2Value" class="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-0.5">
+            <p id="action2Value" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mt-0.5 break-words">
               October 12th
             </p>
           </div>
@@ -411,27 +453,27 @@
       </div>
 
       <!-- 4. ASK CARELENS A QUESTION -->
-      <div class="bg-white rounded-2xl p-6 border-2 border-blue-200 shadow-sm">
-        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <div class="bg-white rounded-2xl p-4 sm:p-6 border-2 border-blue-200 shadow-sm">
+        <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
           <span>💬</span>
           <span data-i18n="askTitle">Have a question about this? Ask CareLens:</span>
         </h4>
 
-        <!-- Text Input + Mic Row -->
-        <div class="flex gap-2 mb-3">
+        <!-- Text Input + Mic Row (Guaranteed no overflow) -->
+        <div class="flex gap-2 mb-3 items-stretch">
           <input
             id="questionInput"
             type="text"
             data-i18n-placeholder="questionPlaceholder"
             placeholder="Type your question here..."
-            class="flex-1 p-4 text-xl border-2 border-linen-300 rounded-xl focus:border-sapphire focus:outline-none"
+            class="flex-1 min-w-0 p-3 sm:p-4 text-base sm:text-xl border-2 border-linen-300 rounded-xl focus:border-sapphire focus:outline-none"
             onkeydown="if(event.key==='Enter') submitTextQuestion()"
           />
           <button
             id="micBtn"
             onclick="toggleSpeechQuestion()"
             title="Tap to speak your question"
-            style="min-width:60px;border-radius:14px;border:2px solid #cbd5e1;background:#f8fafc;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;"
+            class="w-12 sm:w-16 min-w-[48px] sm:min-w-[58px] rounded-xl border-2 border-gray-300 bg-gray-50 text-2xl sm:text-3xl flex items-center justify-center hover:bg-gray-100 flex-shrink-0 transition-colors"
           >
             <span id="micIcon">🎤</span>
           </button>
@@ -443,37 +485,37 @@
           <span id="askBtnText" data-i18n="askBtn">Ask CareLens This Question</span>
         </button>
 
-        <p id="voiceQuestionStatus" data-i18n="voiceStatusDefault" class="text-lg text-gray-500 italic text-center">
+        <p id="voiceQuestionStatus" data-i18n="voiceStatusDefault" class="text-sm sm:text-lg text-gray-500 italic text-center">
           e.g. "When should I take this?" or "Is this a scam?"
         </p>
 
         <!-- Answer Box -->
-        <div id="voiceAnswerBox" class="hidden mt-4 p-5 rounded-xl bg-blue-50 border-2 border-blue-200">
-          <p data-i18n="answerTitle" class="text-sm font-extrabold uppercase tracking-wider text-sapphire mb-2">CareLens Answer:</p>
-          <p id="answerText" class="text-2xl font-semibold text-gray-900 leading-relaxed"></p>
-          <button onclick="playAudio(document.getElementById('answerText').innerText)" class="mt-3 btn-senior bg-sapphire text-white text-base px-5 min-h-[44px]">
+        <div id="voiceAnswerBox" class="hidden mt-4 p-4 sm:p-5 rounded-xl bg-blue-50 border-2 border-blue-200">
+          <p data-i18n="answerTitle" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-sapphire mb-1 sm:mb-2">CareLens Answer:</p>
+          <p id="answerText" class="text-xl sm:text-2xl font-semibold text-gray-900 leading-relaxed"></p>
+          <button onclick="playAudio(document.getElementById('answerText').innerText)" class="mt-3 btn-senior bg-sapphire text-white text-sm sm:text-base px-4 sm:px-5 min-h-[44px] w-full sm:w-auto">
             <span data-i18n="readAnswerAloud">🔊 Read Answer Aloud</span>
           </button>
         </div>
       </div>
 
       <!-- 5. 1-TAP CAREGIVER BRIDGE (WhatsApp) -->
-      <div class="bg-emerald-50 border-2 border-emerald-300 rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h4 data-i18n="caregiverTitle" class="text-2xl sm:text-3xl font-extrabold text-green-900 mb-1">
+          <div class="text-center sm:text-left">
+            <h4 data-i18n="caregiverTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-green-900 mb-1">
               Want a second opinion?
             </h4>
-            <p id="whatsappRecipientHint" data-i18n="caregiverDesc" class="text-xl text-gray-700">
+            <p id="whatsappRecipientHint" data-i18n="caregiverDesc" class="text-base sm:text-xl text-gray-700">
               Send this summary to your family or caregiver on WhatsApp.
             </p>
           </div>
-          <div class="flex flex-col gap-2 w-full sm:w-auto">
-            <button onclick="shareViaWhatsApp('default')" class="btn-senior bg-green-600 hover:bg-green-700 text-white px-8 w-full sm:w-auto flex-shrink-0">
-              <span class="text-2xl">💬</span>
+          <div class="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">
+            <button onclick="shareViaWhatsApp('default')" class="btn-senior bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 w-full sm:w-auto">
+              <span class="text-xl sm:text-2xl">💬</span>
               <span id="defaultShareLabel" data-i18n="sendFamily">Send to Family (WhatsApp)</span>
             </button>
-            <button onclick="shareViaWhatsApp('custom')" class="btn-senior bg-white border-2 border-green-600 text-green-700 hover:bg-green-50 px-8 w-full sm:w-auto flex-shrink-0">
+            <button onclick="shareViaWhatsApp('custom')" class="btn-senior bg-white border-2 border-green-600 text-green-700 hover:bg-green-50 px-6 sm:px-8 w-full sm:w-auto">
               <span>📲</span>
               <span data-i18n="sendOther">Send to Other Number</span>
             </button>
@@ -489,15 +531,15 @@
   <!-- ======================================================== -->
   <!-- MODAL 1: GEMINI API KEY CONFIGURATION                    -->
   <!-- ======================================================== -->
-  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border-4 border-sapphire shadow-2xl">
-      <h3 data-i18n="apiKeyModalTitle" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3.5 sm:p-4" style="padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom));">
+    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[90vh] max-h-[90dvh] overflow-y-auto border-4 border-sapphire shadow-2xl">
+      <h3 data-i18n="apiKeyModalTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">
         🔑 Connect Gemini AI
       </h3>
-      <p id="apiKeyModalPrompt" data-i18n="apiKeyModalDesc" class="text-lg text-gray-600 mb-3">
+      <p id="apiKeyModalPrompt" data-i18n="apiKeyModalDesc" class="text-base sm:text-lg text-gray-600 mb-3">
         Enter your Google Gemini API key to activate real AI vision on your photos.
       </p>
-      <p class="text-base text-sapphire font-semibold mb-4">
+      <p class="text-sm sm:text-base text-sapphire font-semibold mb-4">
         <span data-i18n="apiKeyModalLink">👉 Get a free key in 30 seconds at:</span> <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold">Google AI Studio →</a>
       </p>
 
@@ -505,11 +547,11 @@
         type="password" 
         id="apiKeyInput" 
         placeholder="Paste your key here: AIzaSy..." 
-        class="w-full p-4 text-xl border-2 border-linen-300 rounded-xl mb-4 font-mono focus:border-sapphire focus:outline-none"
+        class="w-full p-3.5 sm:p-4 text-base sm:text-xl border-2 border-linen-300 rounded-xl mb-4 font-mono focus:border-sapphire focus:outline-none"
         onkeydown="if(event.key==='Enter') saveApiKey()"
       />
 
-      <div class="flex flex-col sm:flex-row gap-3">
+      <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         <button id="saveApiKeyBtn" onclick="saveApiKey()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white flex-1">
           <span data-i18n="apiKeyModalSave">✔ Save &amp; Connect</span>
         </button>
@@ -518,7 +560,7 @@
         </button>
       </div>
 
-      <p data-i18n="apiKeyModalNote" class="text-sm text-gray-500 mt-4 text-center">
+      <p data-i18n="apiKeyModalNote" class="text-xs sm:text-sm text-gray-500 mt-4 text-center">
         🔒 Your key is stored only in your browser (localStorage). Never shared.
       </p>
     </div>
@@ -527,42 +569,44 @@
   <!-- ======================================================== -->
   <!-- MODAL 2: FULL IMAGE PREVIEW                              -->
   <!-- ======================================================== -->
-  <div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onclick="closeImageModal()">
-    <div class="max-w-2xl max-h-[90vh] bg-white rounded-2xl overflow-hidden p-2" onclick="event.stopPropagation()">
-      <img id="fullImagePreview" src="" alt="Full preview" class="w-full h-auto max-h-[80vh] object-contain rounded-xl" />
-      <button class="btn-senior bg-gray-900 text-white w-full mt-2" onclick="closeImageModal()">
+  <div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-4" onclick="closeImageModal()">
+    <div class="max-w-2xl w-full max-h-[90vh] max-h-[90dvh] bg-white rounded-2xl overflow-hidden p-2.5 sm:p-3" onclick="event.stopPropagation()">
+      <img id="fullImagePreview" src="" alt="Full preview" class="w-full h-auto max-h-[75vh] max-h-[75dvh] object-contain rounded-xl" />
+      <button class="btn-senior bg-gray-900 text-white w-full mt-2.5" onclick="closeImageModal()">
         <span data-i18n="closePhoto">Close Photo</span>
       </button>
     </div>
   </div>
 
-  <!-- MODAL 3: LIVE WEBCAM / CAMERA VIEWFINDER (FULLSCREEN) -->
   <!-- ======================================================== -->
-  <div id="webcamModal" class="hidden fixed inset-0 z-50 bg-black flex flex-col" style="padding:0;">
-    <!-- Top bar -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,0.7);flex-shrink:0;">
-      <span data-i18n="webcamHeader" style="color:white;font-size:22px;font-weight:800;">📹 Point camera at anything</span>
-      <button onclick="closeLiveWebcam()" style="color:white;font-size:36px;font-weight:700;background:none;border:none;cursor:pointer;line-height:1;">✕</button>
+  <!-- MODAL 3: LIVE WEBCAM / CAMERA VIEWFINDER (FULLSCREEN iOS Safe) -->
+  <!-- ======================================================== -->
+  <div id="webcamModal" class="hidden fixed inset-0 z-50 bg-black flex flex-col" style="height: 100vh; height: 100dvh; width: 100vw; padding:0;">
+    <!-- Top bar with safe-area -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;padding-top:max(12px, env(safe-area-inset-top));background:rgba(0,0,0,0.75);flex-shrink:0;">
+      <span data-i18n="webcamHeader" style="color:white;font-size:18px;font-weight:800;" class="sm:text-2xl">📹 Point camera at anything</span>
+      <button onclick="closeLiveWebcam()" style="color:white;font-size:32px;font-weight:700;background:none;border:none;cursor:pointer;line-height:1;padding:4px 8px;">✕</button>
     </div>
 
     <!-- Fullscreen Video -->
-    <div style="flex:1;position:relative;overflow:hidden;">
-      <video id="webcamVideo" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+    <div style="flex:1;position:relative;overflow:hidden;background:#000;">
+      <video id="webcamVideo" autoplay playsinline webkit-playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;"></video>
       <!-- Corner alignment reticle -->
-      <div style="position:absolute;inset:5%;border:3px solid rgba(255,255,255,0.7);border-radius:20px;pointer-events:none;display:flex;align-items:center;justify-content:center;">
-        <span data-i18n="webcamReticle" style="color:white;background:rgba(0,0,0,0.55);padding:8px 18px;border-radius:10px;font-size:18px;font-weight:700;">Hold item inside this frame</span>
+      <div style="position:absolute;inset:6%;border:3px solid rgba(255,255,255,0.75);border-radius:18px;pointer-events:none;display:flex;align-items:center;justify-content:center;">
+        <span data-i18n="webcamReticle" style="color:white;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:10px;font-size:15px;font-weight:700;text-align:center;" class="sm:text-lg">Hold item inside this frame</span>
       </div>
     </div>
 
-    <!-- Shutter bar -->
-    <div style="padding:16px;background:rgba(0,0,0,0.8);display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;">
+    <!-- Shutter bar with bottom safe-area -->
+    <div style="padding:14px 16px;padding-bottom:max(16px, env(safe-area-inset-bottom));background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;">
       <button
         onclick="captureWebcamSnapshot()"
-        style="width:100%;max-width:480px;background:#1e3a8a;color:white;border:none;border-radius:18px;padding:20px 0;font-size:26px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 4px 20px rgba(30,58,138,0.5);"
+        style="width:100%;max-width:480px;background:#1e3a8a;color:white;border:none;border-radius:16px;padding:16px 0;font-size:20px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(30,58,138,0.5);touch-action:manipulation;"
+        class="sm:text-2xl sm:py-5"
       >
         <span data-i18n="webcamSnap">📸 Tap to Take Photo Now</span>
       </button>
-      <button onclick="closeLiveWebcam()" data-i18n="webcamCancel" style="color:#cbd5e1;font-size:18px;font-weight:600;background:none;border:none;cursor:pointer;padding:6px 12px;">
+      <button onclick="closeLiveWebcam()" data-i18n="webcamCancel" style="color:#cbd5e1;font-size:16px;font-weight:600;background:none;border:none;cursor:pointer;padding:6px 12px;">
         Cancel and go back
       </button>
     </div>
@@ -571,30 +615,30 @@
   <!-- ======================================================== -->
   <!-- MODAL 4: CAREGIVER WHATSAPP NUMBER CONFIGURATION        -->
   <!-- ======================================================== -->
-  <div id="whatsAppModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border-4 border-green-600 shadow-2xl">
-      <div class="flex items-center gap-3 mb-2">
-        <span class="text-3xl">💬</span>
-        <h3 data-i18n="waModalTitle" class="text-2xl sm:text-3xl font-extrabold text-gray-900">
+  <div id="whatsAppModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3.5 sm:p-4" style="padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom));">
+    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[90vh] max-h-[90dvh] overflow-y-auto border-4 border-green-600 shadow-2xl">
+      <div class="flex items-center gap-2.5 sm:gap-3 mb-2">
+        <span class="text-2xl sm:text-3xl">💬</span>
+        <h3 data-i18n="waModalTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900">
           Caregiver WhatsApp
         </h3>
       </div>
-      <p data-i18n="waModalDesc" class="text-lg text-gray-600 mb-4">
+      <p data-i18n="waModalDesc" class="text-base sm:text-lg text-gray-600 mb-4">
         Save your family member or caregiver's WhatsApp number for instant 1-tap second opinion sharing.
       </p>
 
-      <label data-i18n="waModalLabel" class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-1">
+      <label data-i18n="waModalLabel" class="block text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wider mb-1">
         Phone Number (with Country Code)
       </label>
       <input 
         type="tel" 
         id="waNumberInput" 
         placeholder="e.g. +919876543210 or +15551234567" 
-        class="w-full p-4 text-xl border-2 border-linen-300 rounded-xl mb-4 font-mono focus:border-green-600 focus:outline-none"
+        class="w-full p-3.5 sm:p-4 text-base sm:text-xl border-2 border-linen-300 rounded-xl mb-4 font-mono focus:border-green-600 focus:outline-none"
         onkeydown="if(event.key==='Enter') saveWhatsAppNumber()"
       />
 
-      <div class="flex flex-col sm:flex-row gap-3">
+      <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         <button onclick="saveWhatsAppNumber()" class="btn-senior bg-green-600 hover:bg-green-700 text-white flex-1">
           <span data-i18n="waModalSave">✔ Save Number</span>
         </button>
@@ -603,7 +647,7 @@
         </button>
       </div>
 
-      <p data-i18n="waModalNote" class="text-sm text-gray-500 mt-4 text-center">
+      <p data-i18n="waModalNote" class="text-xs sm:text-sm text-gray-500 mt-4 text-center">
         🔒 Stored locally on this device. Include country code (e.g. +91 for India, +1 for US).
       </p>
     </div>
