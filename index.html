@@ -143,23 +143,316 @@
       scrollbar-width: none;
     }
 
-    /* High contrast mode */
-    body.high-contrast {
-      background-color: #000000 !important;
+    /* ==================================================== */
+    /* SENIOR-OPTIMIZED COMFORT DARK MODE                  */
+    /* Deep midnight slate #0F172A with crystal clear text */
+    /* ==================================================== */
+    body.dark-mode {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+    }
+    
+    body.dark-mode header {
+      background-color: #1E293B !important;
+      border-color: #334155 !important;
+    }
+
+    body.dark-mode .bg-white {
+      background-color: #1E293B !important;
+      color: #F8FAFC !important;
+      border-color: #334155 !important;
+    }
+
+    body.dark-mode .bg-linen-50,
+    body.dark-mode .bg-linen-100 {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+      border-color: #334155 !important;
+    }
+
+    body.dark-mode .bg-linen-200 {
+      background-color: #1E293B !important;
+    }
+
+    body.dark-mode .border-linen-200,
+    body.dark-mode .border-linen-300 {
+      border-color: #334155 !important;
+    }
+
+    /* Text contrast fixes for seniors */
+    body.dark-mode .text-gray-900,
+    body.dark-mode .text-gray-800 {
+      color: #F8FAFC !important;
+    }
+
+    body.dark-mode .text-gray-700,
+    body.dark-mode .text-gray-600 {
+      color: #CBD5E1 !important;
+    }
+
+    body.dark-mode .text-gray-500 {
+      color: #94A3B8 !important;
+    }
+
+    body.dark-mode .text-sapphire {
+      color: #60A5FA !important;
+    }
+
+    body.dark-mode .text-sage {
+      color: #34D399 !important;
+    }
+
+    /* Headings */
+    body.dark-mode h1,
+    body.dark-mode h2,
+    body.dark-mode h3,
+    body.dark-mode h4 {
+      color: #F8FAFC !important;
+    }
+
+    /* Hero / Greeting banner */
+    body.dark-mode [data-i18n="heroTitle"] {
+      color: #F8FAFC !important;
+    }
+    body.dark-mode [data-i18n="heroDesc"] {
+      color: #CBD5E1 !important;
+    }
+    body.dark-mode [data-i18n="heroDesc"] strong {
+      color: #F8FAFC !important;
+    }
+
+    /* Camera Viewport Dropzone */
+    body.dark-mode #cameraDropzone {
+      background-color: #1E293B !important;
+      border-color: #3B82F6 !important;
+    }
+    body.dark-mode #cameraDropzone:hover {
+      background-color: #1E3A5F !important;
+      border-color: #60A5FA !important;
+    }
+    body.dark-mode [data-i18n="cameraBtnTitle"] {
+      color: #F8FAFC !important;
+    }
+    body.dark-mode [data-i18n="cameraBtnSub"] {
+      color: #60A5FA !important;
+    }
+
+    /* Form Controls & Inputs in Dark Mode */
+    body.dark-mode input[type="text"],
+    body.dark-mode input[type="password"],
+    body.dark-mode input[type="tel"],
+    body.dark-mode select {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode input::placeholder {
+      color: #64748B !important;
+    }
+    body.dark-mode select option {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+    }
+
+    /* Secondary Action & Toolbar Buttons */
+    body.dark-mode #textSizeBtn,
+    body.dark-mode #contrastBtn {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode header button[onclick="openWhatsAppModal()"] {
+      background-color: #064E3B40 !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+    body.dark-mode header button[onclick="openApiKeyModal()"] {
+      background-color: #1E3A8A40 !important;
+      border-color: #3B82F6 !important;
+      color: #60A5FA !important;
+    }
+
+    /* Upload button */
+    body.dark-mode button[onclick="triggerFilePicker()"] {
+      background-color: #1E293B !important;
+      color: #E2E8F0 !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode button[onclick="triggerFilePicker()"]:hover {
+      background-color: #334155 !important;
       color: #FFFFFF !important;
     }
-    body.high-contrast .bg-white,
-    body.high-contrast .bg-linen-50,
-    body.high-contrast .bg-linen-100 {
-      background-color: #121212 !important;
-      color: #FFFF00 !important;
-      border-color: #FFFF00 !important;
+
+    /* Action Cards & Icon containers */
+    body.dark-mode #action1Label,
+    body.dark-mode #action2Label {
+      color: #94A3B8 !important;
     }
-    body.high-contrast .text-gray-600,
-    body.high-contrast .text-gray-700,
-    body.high-contrast .text-gray-800,
-    body.high-contrast .text-gray-900 {
+    body.dark-mode #action1Value,
+    body.dark-mode #action2Value {
+      color: #F8FAFC !important;
+    }
+    body.dark-mode #action1Icon {
+      background-color: #78350F !important;
+      color: #FDE68A !important;
+    }
+    body.dark-mode #action2Icon {
+      background-color: #064E3B !important;
+      color: #A7F3D0 !important;
+    }
+
+    /* Results Header & Summary */
+    body.dark-mode button[onclick="resetToHome()"] {
+      background-color: #334155 !important;
+      color: #F8FAFC !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode [data-i18n="plainSummaryBadge"] {
+      background-color: #1E3A8A !important;
+      color: #93C5FD !important;
+      border-color: #3B82F6 !important;
+    }
+    body.dark-mode #classificationTag {
+      background-color: #334155 !important;
+      color: #E2E8F0 !important;
+    }
+    body.dark-mode #summaryText {
+      color: #F8FAFC !important;
+    }
+
+    /* Safety Badges in Dark Mode */
+    body.dark-mode #safetyBadgeContainer.bg-sage-light {
+      background-color: #064E3B !important;
+      border-color: #059669 !important;
+      color: #ECFDF5 !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-crimson-light {
+      background-color: #7F1D1D !important;
+      border-color: #DC2626 !important;
+      color: #FEF2F2 !important;
+    }
+    body.dark-mode #safetyBadgeContainer.bg-honey-light {
+      background-color: #78350F !important;
+      border-color: #D97706 !important;
+      color: #FFFBEB !important;
+    }
+    body.dark-mode #safetyBadgeTitle {
       color: #FFFFFF !important;
+    }
+    body.dark-mode #safetyBadgeDesc {
+      color: #F8FAFC !important;
+    }
+
+    /* Audio voice player in Dark Mode */
+    body.dark-mode .bg-blue-50 {
+      background-color: #132238 !important;
+      border-color: #2563EB !important;
+    }
+    body.dark-mode [data-i18n="voiceCompanion"] {
+      color: #60A5FA !important;
+    }
+    body.dark-mode [data-i18n="voicePace"] {
+      color: #CBD5E1 !important;
+    }
+
+    /* WhatsApp caregiver section in Dark Mode */
+    body.dark-mode .bg-emerald-50 {
+      background-color: #082F1E !important;
+      border-color: #059669 !important;
+    }
+    body.dark-mode [data-i18n="caregiverTitle"] {
+      color: #34D399 !important;
+    }
+    body.dark-mode #whatsappRecipientHint {
+      color: #CBD5E1 !important;
+    }
+    body.dark-mode button[onclick="shareViaWhatsApp('custom')"] {
+      background-color: #1E293B !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    /* Question box & Answer box in Dark Mode */
+    body.dark-mode #voiceAnswerBox {
+      background-color: #132238 !important;
+      border-color: #3B82F6 !important;
+    }
+    body.dark-mode [data-i18n="answerTitle"] {
+      color: #60A5FA !important;
+    }
+    body.dark-mode #answerText {
+      color: #F8FAFC !important;
+    }
+    body.dark-mode #micBtn {
+      background-color: #1E293B !important;
+      border-color: #475569 !important;
+      color: #F8FAFC !important;
+    }
+    body.dark-mode #voiceQuestionStatus {
+      color: #94A3B8 !important;
+    }
+
+    /* Sample test drawer */
+    body.dark-mode details {
+      background-color: #1E293B !important;
+      border-color: #334155 !important;
+    }
+    body.dark-mode summary {
+      color: #E2E8F0 !important;
+    }
+    body.dark-mode summary span[data-i18n="sampleTitle"] {
+      color: #F8FAFC !important;
+    }
+    body.dark-mode summary span[data-i18n="sampleClick"] {
+      color: #60A5FA !important;
+    }
+    body.dark-mode button[onclick="loadPreset('medication')"] {
+      background-color: #78350F33 !important;
+      color: #FDE68A !important;
+      border-color: #B45309 !important;
+    }
+    body.dark-mode button[onclick="loadPreset('billing')"] {
+      background-color: #1E3A8A33 !important;
+      color: #93C5FD !important;
+      border-color: #2563EB !important;
+    }
+    body.dark-mode button[onclick="loadPreset('scam')"] {
+      background-color: #7F1D1D33 !important;
+      color: #FCA5A5 !important;
+      border-color: #DC2626 !important;
+    }
+
+    /* Modals in Dark Mode */
+    body.dark-mode #apiKeyModal > div,
+    body.dark-mode #whatsAppModal > div,
+    body.dark-mode #imageModal > div {
+      background-color: #1E293B !important;
+      color: #F8FAFC !important;
+      border-color: #3B82F6 !important;
+    }
+    body.dark-mode #apiKeyModal h3,
+    body.dark-mode #whatsAppModal h3 {
+      color: #F8FAFC !important;
+    }
+    body.dark-mode #apiKeyModalPrompt,
+    body.dark-mode #whatsAppModal p {
+      color: #CBD5E1 !important;
+    }
+    body.dark-mode #apiKeyInput,
+    body.dark-mode #waNumberInput {
+      background-color: #0F172A !important;
+      color: #F8FAFC !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode button[onclick="closeApiKeyModal()"],
+    body.dark-mode button[onclick="closeWhatsAppModal()"] {
+      background-color: #334155 !important;
+      color: #F8FAFC !important;
+      border-color: #475569 !important;
+    }
+    body.dark-mode [data-i18n="apiKeyModalNote"],
+    body.dark-mode [data-i18n="waModalNote"] {
+      color: #94A3B8 !important;
     }
   </style>
 </head>
@@ -222,9 +515,9 @@
           <span class="pointer-events-none absolute right-2 text-gray-500 text-xs sm:text-sm">▾</span>
         </div>
 
-        <!-- High Contrast Mode Toggle -->
-        <button id="contrastBtn" onclick="toggleHighContrast()" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-lg sm:text-xl flex items-center justify-center hover:bg-linen-100 flex-shrink-0" title="High Contrast Mode" aria-label="Toggle High Contrast">
-          🌓
+        <!-- Dark / Light Mode Comfort Toggle -->
+        <button id="contrastBtn" onclick="toggleDarkMode()" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-lg sm:text-xl flex items-center justify-center hover:bg-linen-100 flex-shrink-0" title="Toggle Dark / Light Mode" aria-label="Toggle Dark or Light Mode">
+          🌙
         </button>
 
         <!-- WhatsApp Settings -->
@@ -1554,6 +1847,17 @@
       if (activeApiKey) {
         document.getElementById('apiKeyInput').value = activeApiKey;
       }
+
+      // Theme restoration (Comfort Dark Mode / Light Mode)
+      const savedTheme = localStorage.getItem('CARELENS_THEME');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+      updateThemeIcon(isDark);
       
       // Restore saved language and apply translations
       const langSel = document.getElementById('langSelector');
@@ -1607,7 +1911,7 @@
     }
 
     // ----------------------------------------------------
-    // ACCESSIBILITY TOGGLES (Text scale & High contrast)
+    // ACCESSIBILITY & COMFORT THEME TOGGLES
     // ----------------------------------------------------
     function toggleTextSize() {
       currentFontSizeIndex = (currentFontSizeIndex + 1) % fontScales.length;
@@ -1619,8 +1923,20 @@
       document.getElementById('textSizeLabel').innerText = `${t.textSizePrefix || 'Text:'} ${sizeText}`;
     }
 
-    function toggleHighContrast() {
-      document.body.classList.toggle('high-contrast');
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      localStorage.setItem('CARELENS_THEME', isDark ? 'dark' : 'light');
+      updateThemeIcon(isDark);
+      updateAiStatusCard(!!activeApiKey);
+    }
+
+    function updateThemeIcon(isDark) {
+      const btn = document.getElementById('contrastBtn');
+      if (btn) {
+        btn.innerText = isDark ? '☀️' : '🌙';
+        btn.title = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+        btn.setAttribute('aria-label', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      }
     }
 
     // ----------------------------------------------------
@@ -1702,14 +2018,25 @@
       const subtitle = document.getElementById('aiStatusSubtitle');
       if (!card) return;
       const t = TRANSLATIONS[activeLanguage] || TRANSLATIONS['English'];
+      const isDark = document.body.classList.contains('dark-mode');
       if (hasKey) {
-        card.style.cssText = 'border-color:#16a34a;background:#f0fdf4;box-shadow:0 1px 3px rgba(0,0,0,.08);';
-        dot.style.cssText = 'background:#16a34a;';
+        if (isDark) {
+          card.style.cssText = 'border-color:#10B981;background:#064E3B4D;box-shadow:0 1px 3px rgba(0,0,0,.3);';
+          dot.style.cssText = 'background:#34D399;';
+        } else {
+          card.style.cssText = 'border-color:#16a34a;background:#f0fdf4;box-shadow:0 1px 3px rgba(0,0,0,.08);';
+          dot.style.cssText = 'background:#16a34a;';
+        }
         title.innerText = t.aiStatusTitleKey;
         subtitle.innerText = t.aiStatusSubtitleKey;
       } else {
-        card.style.cssText = 'border-color:#f59e0b;background:#fffbeb;box-shadow:0 1px 3px rgba(0,0,0,.08);';
-        dot.style.cssText = 'background:#f59e0b;';
+        if (isDark) {
+          card.style.cssText = 'border-color:#F59E0B;background:#78350F3D;box-shadow:0 1px 3px rgba(0,0,0,.3);';
+          dot.style.cssText = 'background:#FBBF24;';
+        } else {
+          card.style.cssText = 'border-color:#f59e0b;background:#fffbeb;box-shadow:0 1px 3px rgba(0,0,0,.08);';
+          dot.style.cssText = 'background:#f59e0b;';
+        }
         title.innerText = t.aiStatusTitleNoKey;
         subtitle.innerText = t.aiStatusSubtitleNoKey;
       }
