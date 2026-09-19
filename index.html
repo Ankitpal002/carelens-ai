@@ -584,16 +584,17 @@
       const title = document.getElementById('aiStatusTitle');
       const subtitle = document.getElementById('aiStatusSubtitle');
       if (!card) return;
+      // Use inline styles for reliability — avoids dependency on Tailwind JIT classes
       if (hasKey) {
-        card.className = 'rounded-2xl p-4 sm:p-5 border-3 border-trustGreen bg-emerald-50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm';
-        dot.className = 'w-4 h-4 rounded-full bg-trustGreen animate-pulse flex-shrink-0';
-        title.innerText = '✅ Live AI Active: Google Gemini Vision Connected';
+        card.style.cssText = 'border-color:#22c55e;background:#f0fdf4;box-shadow:0 1px 3px rgba(0,0,0,.1);';
+        dot.style.cssText = 'background:#22c55e;';
+        title.innerText = '✅ AI Connected: Google Gemini Vision is Active';
         subtitle.innerText = 'Your photos will be analyzed in real-time by Gemini AI.';
       } else {
-        card.className = 'rounded-2xl p-4 sm:p-5 border-3 border-amber-400 bg-amber-50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm';
-        dot.className = 'w-4 h-4 rounded-full bg-amber-500 animate-pulse flex-shrink-0';
-        title.innerText = 'Live AI Status: API Key Needed for Real Image Analysis';
-        subtitle.innerText = 'To analyze real photos with Google Gemini AI, please enter your free API key.';
+        card.style.cssText = 'border-color:#f59e0b;background:#fffbeb;box-shadow:0 1px 3px rgba(0,0,0,.1);';
+        dot.style.cssText = 'background:#f59e0b;';
+        title.innerText = '⚠️ API Key Needed for Real Image Analysis';
+        subtitle.innerText = 'To analyze real photos with Gemini AI, tap the key icon (🔑) in the top bar.';
       }
     }
 
@@ -601,16 +602,23 @@
     // UNIVERSAL CAMERA & WEBCAM LOGIC (Point at Anything!)
     // ----------------------------------------------------
     async function triggerUniversalCamera() {
-      // Try opening the live webcam viewfinder first for a seamless in-browser experience
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // getUserMedia only works on HTTPS or localhost — not on file:// protocol
+      const isSecureContext = window.isSecureContext ||
+        location.protocol === 'https:' ||
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1';
+
+      if (isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Try the in-browser live webcam viewfinder
         try {
           await openLiveWebcam();
           return;
         } catch (err) {
-          console.log("Direct webcam stream not available, falling back to device camera input", err);
+          console.warn('Webcam viewfinder failed, falling back to native camera input:', err);
+          // Fall through to native picker below
         }
       }
-      // Fallback to native device camera/file picker
+      // Fallback: native device file-picker with camera capture
       document.getElementById('cameraInput').click();
     }
 
@@ -618,18 +626,38 @@
       const modal = document.getElementById('webcamModal');
       const video = document.getElementById('webcamVideo');
 
-      try {
-        webcamStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-          audio: false
-        });
-        video.srcObject = webcamStream;
-        modal.classList.remove('hidden');
-      } catch (err) {
-        console.warn("Could not access camera stream:", err);
-        // If camera permission blocked or not found, open file input
-        document.getElementById('cameraInput').click();
+      // Request rear camera first (environment), fall back to any camera
+      const constraints = [
+        { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+        { video: true, audio: false }
+      ];
+
+      let stream = null;
+      for (const c of constraints) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(c);
+          break;
+        } catch (e) {
+          // try next constraint
+        }
       }
+
+      if (!stream) {
+        // Cannot open any camera — fall back to native file picker
+        console.warn('No camera accessible. Falling back to file picker.');
+        document.getElementById('cameraInput').click();
+        return;
+      }
+
+      webcamStream = stream;
+      video.srcObject = stream;
+      // Wait for video metadata to load before showing modal
+      await new Promise(resolve => {
+        video.onloadedmetadata = resolve;
+        setTimeout(resolve, 2000); // safety timeout
+      });
+      video.play();
+      modal.classList.remove('hidden');
     }
 
     function closeLiveWebcam() {
@@ -756,29 +784,29 @@
     // IMAGE PROCESSING & GEMINI MULTIMODAL API
     // ----------------------------------------------------
     async function processImage(dataUrl) {
-      // BUG FIX #1: If no API key, show a clear friendly prompt instead of a silent fake response
+      // Guard: If no API key — show prompt modal, never show fake preset data
       if (!activeApiKey) {
-        showLoading(false);
-        document.getElementById('viewCapture').classList.remove('hidden');
-        // Flash the status card and open the API key modal directly
         const card = document.getElementById('aiStatusCard');
         if (card) {
           card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          card.style.boxShadow = '0 0 0 4px #DC2626';
-          setTimeout(() => card.style.boxShadow = '', 2000);
+          const origShadow = card.style.boxShadow;
+          card.style.boxShadow = '0 0 0 5px #DC2626';
+          setTimeout(() => card.style.boxShadow = origShadow, 2500);
         }
+        // Small delay so the scroll animation completes before modal opens
         setTimeout(() => {
-          openApiKeyModal();
           document.getElementById('apiKeyModalPrompt').innerText =
-            '📸 You just uploaded a photo! To get a real AI analysis, please enter your Gemini API key below.';
-        }, 600);
+            '📸 Photo received! Enter your free Gemini API key below to analyze it with real AI.';
+          openApiKeyModal();
+        }, 400);
         return;
       }
 
+      // Show loading state (single call)
       showLoading(true);
 
       try {
-        // BUG FIX #3: Detect actual MIME type from the dataUrl, not hardcode jpeg
+        // Detect actual MIME type from the dataUrl prefix
         const mimeMatch = dataUrl.match(/^data:([^;]+);/);
         const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
         const response = await callGeminiVisionWithRetry(currentImageBase64, mimeType);
@@ -787,7 +815,6 @@
       } catch (err) {
         console.error('Gemini API Error:', err);
         showLoading(false);
-        // Show a human-readable error screen instead of silent fallback
         showApiError(err.message);
       } finally {
         showLoading(false);
