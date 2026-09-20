@@ -121,3 +121,27 @@ def save_caregiver_api(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'success': True, 'phone_number': phone})
     except Exception as exc:
         return JsonResponse({'success': False, 'error': str(exc)}, status=500)
+
+
+@require_POST
+def complete_tour_api(request: HttpRequest) -> JsonResponse:
+    """
+    POST /api/complete-tour/
+    Marks the onboarding guide/tour as completed for the senior user.
+    """
+    try:
+        # Clear session first-time tour flag
+        request.session['just_logged_in_show_tour'] = False
+        request.session['tour_completed'] = True
+
+        if request.user.is_authenticated:
+            profile = getattr(request.user, 'senior_profile', None)
+            if profile:
+                profile.has_completed_tour = True
+                profile.save(update_fields=['has_completed_tour'])
+
+        return JsonResponse({'success': True, 'message': 'Onboarding guide completed successfully.'})
+    except Exception as exc:
+        logger.error(f"Error completing onboarding tour: {exc}")
+        return JsonResponse({'success': False, 'error': str(exc)}, status=500)
+

@@ -129,3 +129,14 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# ==============================================================================
+# AUTHENTICATION CONFIGURATION
+# ==============================================================================
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Message framework storage (session-backed)
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+

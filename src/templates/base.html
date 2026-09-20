@@ -41,11 +41,13 @@
 
   <!-- TOP ACCESSIBILITY & SETTINGS HEADER -->
   <header class="bg-white border-b-2 border-linen-200 sticky top-0 z-40 px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm" style="padding-top: max(10px, env(safe-area-inset-top));">
-    <div class="max-w-4xl mx-auto flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3">
+    <div class="max-w-4xl mx-auto flex flex-col gap-2.5">
       
-      <!-- Brand & Senior Badge -->
-      <div class="flex items-center justify-between w-full xs:w-auto gap-2.5">
-        <div class="flex items-center gap-2.5">
+      <!-- Row 1: Brand & User Auth Status -->
+      <div class="flex items-center justify-between gap-2.5 flex-wrap">
+        
+        <!-- Brand & Senior Badge -->
+        <a href="{% url 'companion:home' %}" class="flex items-center gap-2.5 hover:opacity-95 transition-opacity">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sapphire text-white flex items-center justify-center text-xl sm:text-2xl shadow-md flex-shrink-0">
             🔍
           </div>
@@ -58,53 +60,128 @@
               <span data-i18n="seniorBadge">Senior Companion Mode Active</span>
             </p>
           </div>
+        </a>
+
+        <!-- Auth & Guide Links -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          
+          <!-- Quick Guide Replay Button -->
+          <button
+            id="quickGuideBtn"
+            onclick="startOnboardingTour()"
+            class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl border-2 border-sapphire/40 bg-sapphire-light text-sapphire font-bold text-xs sm:text-sm hover:bg-blue-100 flex items-center gap-1 transition-colors shadow-sm"
+            title="Open Interactive Quick Guide"
+            aria-label="Open Interactive Quick Guide"
+          >
+            <span>📖</span>
+            <span class="font-extrabold" data-i18n="quickGuideBtn">Quick Guide</span>
+          </button>
+
+          {% if user.is_authenticated %}
+            <!-- Logged In User Info -->
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="text-xs sm:text-sm font-bold text-gray-800 bg-linen-100 px-2.5 py-1.5 rounded-xl border border-linen-300 flex items-center gap-1 truncate max-w-[140px] sm:max-w-none">
+                <span>👤</span>
+                <span class="truncate">{{ user.first_name|default:user.username }}</span>
+              </span>
+              <a
+                href="{% url 'companion:logout' %}"
+                class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl border-2 border-linen-300 text-gray-700 font-bold text-xs sm:text-sm hover:bg-linen-100 flex items-center gap-1 transition-colors"
+                title="Log Out"
+              >
+                <span>🚪</span>
+                <span class="hidden sm:inline">Log Out</span>
+              </a>
+            </div>
+          {% else %}
+            <!-- Unauthenticated User Links -->
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <a
+                href="{% url 'companion:login' %}"
+                class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl border-2 border-sapphire text-sapphire font-bold text-xs sm:text-sm hover:bg-blue-50 flex items-center gap-1 transition-colors"
+                title="Log In"
+              >
+                <span>🔑</span>
+                <span>Log In</span>
+              </a>
+              <a
+                href="{% url 'companion:signup' %}"
+                class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-sapphire hover:bg-sapphire-hover text-white font-bold text-xs sm:text-sm flex items-center gap-1 shadow-sm transition-colors"
+                title="Sign Up"
+              >
+                <span>✨</span>
+                <span>Sign Up</span>
+              </a>
+            </div>
+          {% endif %}
+
         </div>
       </div>
 
-      <!-- Accessibility Toolbar -->
-      <div class="flex items-center justify-end gap-1.5 sm:gap-2 w-full xs:w-auto overflow-x-auto py-0.5 scrollbar-none">
+      <!-- Row 2: Accessibility Toolbar -->
+      <div class="flex items-center justify-between gap-1.5 sm:gap-2 pt-1 border-t border-linen-200 overflow-x-auto scrollbar-none">
         
-        <!-- Text Size Magnifier Toggle -->
-        <button id="textSizeBtn" onclick="toggleTextSize()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-base sm:text-lg hover:bg-linen-100 flex items-center gap-1 flex-shrink-0" title="Increase Text Size" aria-label="Adjust font size">
-          <span>🔍</span>
-          <span id="textSizeLabel" class="hidden md:inline text-sm sm:text-base">Text: Normal</span>
-        </button>
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <!-- Text Size Magnifier Toggle -->
+          <button id="textSizeBtn" onclick="toggleTextSize()" class="h-9 sm:h-11 px-2 sm:px-3 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-xs sm:text-base hover:bg-linen-100 flex items-center gap-1 flex-shrink-0" title="Increase Text Size" aria-label="Adjust font size">
+            <span>🔍</span>
+            <span id="textSizeLabel" class="text-xs sm:text-sm">Text: Normal</span>
+          </button>
 
-        <!-- Language Selector -->
-        <div class="relative flex items-center flex-shrink-0">
-          <select
-            id="langSelector"
-            onchange="onLanguageChange()"
-            class="h-10 sm:h-12 pl-2.5 pr-7 sm:pl-3 sm:pr-8 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-semibold text-xs sm:text-base focus:outline-none focus:border-sapphire cursor-pointer appearance-none shadow-sm max-w-[125px] sm:max-w-none truncate"
-            title="Response Language"
-            aria-label="Select response language"
-          >
-            {% for code, label in languages %}
-              <option value="{{ code }}">{{ label }}</option>
-            {% endfor %}
-          </select>
-          <span class="pointer-events-none absolute right-2 text-gray-500 text-xs sm:text-sm">▾</span>
+          <!-- Language Selector -->
+          <div class="relative flex items-center flex-shrink-0">
+            <select
+              id="langSelector"
+              onchange="onLanguageChange()"
+              class="h-9 sm:h-11 pl-2 pr-6 sm:pl-3 sm:pr-8 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-semibold text-xs sm:text-sm focus:outline-none focus:border-sapphire cursor-pointer appearance-none shadow-sm max-w-[125px] sm:max-w-none truncate"
+              title="Response Language"
+              aria-label="Select response language"
+            >
+              {% for code, label in languages %}
+                <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+            <span class="pointer-events-none absolute right-2 text-gray-500 text-xs sm:text-sm">▾</span>
+          </div>
+
+          <!-- Dark / Light Mode Comfort Toggle -->
+          <button id="contrastBtn" onclick="toggleDarkMode()" class="h-9 w-9 sm:h-11 sm:w-11 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-base sm:text-lg flex items-center justify-center hover:bg-linen-100 flex-shrink-0" title="Toggle Dark / Light Mode" aria-label="Toggle Dark or Light Mode">
+            🌙
+          </button>
         </div>
 
-        <!-- Dark / Light Mode Comfort Toggle -->
-        <button id="contrastBtn" onclick="toggleDarkMode()" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-lg sm:text-xl flex items-center justify-center hover:bg-linen-100 flex-shrink-0" title="Toggle Dark / Light Mode" aria-label="Toggle Dark or Light Mode">
-          🌙
-        </button>
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <!-- WhatsApp Settings -->
+          <button onclick="openWhatsAppModal()" class="h-9 sm:h-11 px-2 sm:px-3 rounded-xl border-2 border-green-600 text-green-700 font-bold text-xs sm:text-sm hover:bg-green-50 flex items-center gap-1 flex-shrink-0" title="Set Caregiver WhatsApp Number">
+            <span>💬</span>
+            <span class="hidden md:inline" data-i18n="whatsappBtn">WhatsApp</span>
+          </button>
 
-        <!-- WhatsApp Settings -->
-        <button onclick="openWhatsAppModal()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-green-600 text-green-700 font-bold text-sm sm:text-base hover:bg-green-50 flex items-center gap-1 flex-shrink-0" title="Set Caregiver WhatsApp Number">
-          <span>💬</span>
-          <span class="hidden md:inline" data-i18n="whatsappBtn">WhatsApp</span>
-        </button>
+          <!-- Gemini API Key Modal Trigger -->
+          <button onclick="openApiKeyModal()" class="h-9 sm:h-11 px-2 sm:px-3 rounded-xl border-2 border-sapphire text-sapphire font-bold text-xs sm:text-sm hover:bg-blue-50 flex items-center gap-1 flex-shrink-0" title="Configure API Key">
+            <span>🔑</span>
+            <span class="hidden md:inline" data-i18n="apiKeyBtn">API Key</span>
+          </button>
+        </div>
 
-        <!-- Gemini API Key Modal Trigger -->
-        <button onclick="openApiKeyModal()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-sapphire text-sapphire font-bold text-sm sm:text-base hover:bg-blue-50 flex items-center gap-1 flex-shrink-0" title="Configure API Key">
-          <span>🔑</span>
-          <span class="hidden md:inline" data-i18n="apiKeyBtn">API Key</span>
-        </button>
       </div>
     </div>
   </header>
+
+  <!-- DJANGO FLASH MESSAGES -->
+  {% if messages %}
+    <div class="max-w-4xl mx-auto px-3.5 sm:px-6 pt-3">
+      {% for message in messages %}
+        <div class="p-3.5 sm:p-4 rounded-2xl mb-2 flex items-center justify-between gap-3 text-base font-bold shadow-sm {% if message.tags == 'success' %}bg-sage-light border-2 border-sage text-sage{% elif message.tags == 'error' %}bg-crimson-light border-2 border-crimson text-crimson{% else %}bg-blue-50 border-2 border-sapphire text-sapphire{% endif %}">
+          <div class="flex items-center gap-2">
+            <span>{% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}⚠️{% else %}ℹ️{% endif %}</span>
+            <span>{{ message }}</span>
+          </div>
+          <button onclick="this.parentElement.remove()" class="text-xl font-extrabold hover:opacity-75 cursor-pointer">✕</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-4xl w-full mx-auto p-3.5 sm:p-6 flex flex-col justify-center" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
@@ -115,12 +192,20 @@
   {% include 'companion/modals/api_key_modal.html' %}
   {% include 'companion/modals/whatsapp_modal.html' %}
   {% include 'companion/modals/image_modal.html' %}
+  {% include 'companion/modals/onboarding_guide_modal.html' %}
+
+  <!-- GLOBAL INITIALIZATION VARIABLES -->
+  <script>
+    window.showOnboardingTour = {{ show_tour|default:"false"|yesno:"true,false" }};
+    window.userAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+  </script>
 
   <!-- JAVASCRIPT MODULES -->
   <script src="{% static 'js/audio_companion.js' %}"></script>
   <script src="{% static 'js/camera.js' %}"></script>
   <script src="{% static 'js/voice_qa.js' %}"></script>
   <script src="{% static 'js/whatsapp_bridge.js' %}"></script>
+  <script src="{% static 'js/onboarding_tour.js' %}"></script>
   <script src="{% static 'js/app.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>

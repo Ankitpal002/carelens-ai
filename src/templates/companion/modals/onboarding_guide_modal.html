@@ -1,0 +1,121 @@
+<!-- ACCESSIBLE INTERACTIVE ONBOARDING QUICK GUIDE MODAL -->
+<div id="onboardingModal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm transition-opacity duration-200" role="dialog" aria-modal="true" aria-labelledby="tourStepTitle">
+  <div class="relative bg-white rounded-3xl max-w-2xl w-full border-4 border-sapphire shadow-2xl overflow-hidden flex flex-col my-auto transition-transform duration-200 transform scale-100">
+    
+    <!-- Top Progress & Header Bar -->
+    <div class="bg-sapphire text-white p-4 sm:p-5 flex items-center justify-between">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <span class="text-2xl sm:text-3xl">📖</span>
+        <div>
+          <h3 class="text-lg sm:text-2xl font-extrabold leading-tight">
+            CareLens AI Quick Guide
+          </h3>
+          <p id="tourStepCounter" class="text-xs sm:text-sm font-semibold text-blue-100">
+            Step 1 of 6 • Welcome Tour
+          </p>
+        </div>
+      </div>
+
+      <button
+        onclick="skipOnboardingTour()"
+        class="text-blue-100 hover:text-white font-bold text-sm sm:text-base px-2.5 py-1 rounded-lg hover:bg-sapphire-hover transition-colors"
+        title="Close Guide"
+      >
+        ✕ Close
+      </button>
+    </div>
+
+    <!-- Progress Indicator Bar -->
+    <div class="w-full bg-blue-100 h-2">
+      <div id="tourProgressBar" class="bg-sage h-2 transition-all duration-300" style="width: 16.66%;"></div>
+    </div>
+
+    <!-- Tour Body Container -->
+    <div class="p-5 sm:p-8 flex-1 flex flex-col justify-between">
+      
+      <!-- Current Step Content -->
+      <div id="tourContent" class="space-y-4 sm:space-y-6">
+        
+        <div class="flex items-center gap-4">
+          <div id="tourStepIcon" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-sapphire-light text-sapphire border-2 border-sapphire/30 flex items-center justify-center text-3xl sm:text-5xl flex-shrink-0 shadow-inner">
+            📸
+          </div>
+          <div>
+            <span id="tourStepBadge" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-sapphire bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+              Core Feature
+            </span>
+            <h4 id="tourStepTitle" class="text-xl sm:text-3xl font-extrabold text-gray-900 mt-1 leading-tight">
+              1. Point Camera at Anything
+            </h4>
+          </div>
+        </div>
+
+        <p id="tourStepDescription" class="text-base sm:text-xl text-gray-700 leading-relaxed font-medium">
+          Tap the giant blue camera shutter or upload any photo. CareLens easily reads medicine bottles, paper utility bills, letters, notices, food labels, and appliance dials.
+        </p>
+
+        <!-- Helpful Tip Box inside Step -->
+        <div id="tourStepTipBox" class="p-3.5 sm:p-4 rounded-2xl bg-linen-100 border border-linen-300 text-sm sm:text-base text-gray-800 font-semibold flex items-center gap-2.5">
+          <span class="text-xl">💡</span>
+          <span id="tourStepTipText">Testing without a physical item? Use the collapsible "Sample Images" right on the home screen!</span>
+        </div>
+
+      </div>
+
+      <!-- Tour Navigation & Action Controls -->
+      <div class="mt-6 pt-5 border-t-2 border-linen-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        
+        <!-- Audio Read Aloud Step -->
+        <button
+          id="tourAudioBtn"
+          onclick="readCurrentTourStepAloud()"
+          class="btn-senior bg-blue-50 hover:bg-blue-100 text-sapphire border-2 border-sapphire/30 text-sm sm:text-base px-3.5 sm:px-4 py-2 w-full sm:w-auto flex items-center justify-center gap-1.5"
+          title="Listen to this step"
+        >
+          <span>🔊</span>
+          <span id="tourAudioLabel">Read Step Aloud</span>
+        </button>
+
+        <!-- Next / Prev / Finish Buttons -->
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <button
+            id="tourPrevBtn"
+            onclick="prevTourStep()"
+            class="btn-senior bg-white hover:bg-linen-100 text-gray-700 border-2 border-linen-300 px-4 py-2.5 text-base sm:text-lg font-bold flex-1 sm:flex-initial hidden"
+          >
+            ⬅️ Back
+          </button>
+
+          <button
+            id="tourNextBtn"
+            onclick="nextTourStep()"
+            class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-6 py-2.5 text-base sm:text-lg font-extrabold shadow-md flex-1 sm:flex-initial"
+          >
+            <span>Next Step ➡️</span>
+          </button>
+
+          <button
+            id="tourFinishBtn"
+            onclick="finishOnboardingTour()"
+            class="btn-senior bg-sage hover:bg-green-700 text-white px-6 py-2.5 text-base sm:text-lg font-extrabold shadow-md flex-1 sm:flex-initial hidden"
+          >
+            <span>🎉 Got It! Start Exploring</span>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Step Dots Footer -->
+    <div class="bg-linen-50 px-4 py-2.5 border-t border-linen-200 flex items-center justify-center gap-2">
+      <span class="tour-dot w-3 h-3 rounded-full bg-sapphire" data-step="0"></span>
+      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="1"></span>
+      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="2"></span>
+      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="3"></span>
+      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="4"></span>
+      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="5"></span>
+    </div>
+
+  </div>
+</div>

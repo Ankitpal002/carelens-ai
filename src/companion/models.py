@@ -4,13 +4,21 @@ Data models for CareLens AI senior companion.
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class SeniorProfile(models.Model):
     """
     Senior user accessibility profile and visual/hearing preferences.
     """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='senior_profile', null=True, blank=True)
     name = models.CharField(max_length=100, default='Senior User', help_text="Preferred name or greeting")
+    role = models.CharField(
+        max_length=20,
+        choices=[('senior', 'Senior User'), ('caregiver', 'Family Caregiver')],
+        default='senior',
+        help_text="User role (Senior or Family Caregiver)"
+    )
     preferred_language = models.CharField(max_length=50, default='English', help_text="Primary UI and speech language")
     font_scale = models.CharField(
         max_length=20,
@@ -25,6 +33,10 @@ class SeniorProfile(models.Model):
         help_text="Visual comfort theme"
     )
     speech_rate = models.FloatField(default=0.88, help_text="Calibrated speech rate for senior hearing (0.7 - 1.0)")
+    has_completed_tour = models.BooleanField(
+        default=False,
+        help_text="Whether senior user has finished the onboarding walkthrough"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

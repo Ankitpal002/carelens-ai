@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Up — CareLens AI Senior Companion{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto w-full py-4 sm:py-8">
+  
+  <!-- Sign Up Card -->
+  <div class="bg-white rounded-3xl p-6 sm:p-10 border-2 border-linen-200 shadow-xl">
+    
+    <!-- Header with friendly icon -->
+    <div class="text-center mb-6 sm:mb-8">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-sage-light text-sage border-2 border-sage/30 rounded-2xl mx-auto flex items-center justify-center text-3xl sm:text-4xl mb-3 shadow-inner">
+        🌟
+      </div>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+        Create Your Account
+      </h2>
+      <p class="text-base sm:text-lg text-gray-600 mt-1.5 max-w-md mx-auto">
+        Join CareLens AI for clear audio explanations, scam protection, and easy visual assistance.
+      </p>
+    </div>
+
+    <!-- Error Messages -->
+    {% if form.errors %}
+      <div class="mb-6 p-4 rounded-2xl bg-crimson-light border-2 border-crimson text-crimson text-base font-semibold" role="alert">
+        <p class="font-extrabold flex items-center gap-1.5 mb-1">
+          <span>⚠️</span> Please correct the errors below:
+        </p>
+        <ul class="list-disc list-inside text-sm sm:text-base">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <li><strong>{{ field|title }}:</strong> {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <!-- Sign Up Form -->
+    <form method="post" action="{% url 'companion:signup' %}" class="space-y-5">
+      {% csrf_token %}
+
+      <!-- Full Name -->
+      <div>
+        <label for="{{ form.name.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
+          👤 {{ form.name.label }} <span class="text-crimson">*</span>
+        </label>
+        {{ form.name }}
+      </div>
+
+      <!-- Username -->
+      <div>
+        <label for="{{ form.username.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
+          🏷️ {{ form.username.label }} <span class="text-crimson">*</span>
+        </label>
+        {{ form.username }}
+      </div>
+
+      <!-- Role Choice -->
+      <div>
+        <label class="block text-base sm:text-lg font-bold text-gray-800 mb-2">
+          👥 {{ form.role.label }}
+        </label>
+        <div class="space-y-2 bg-linen-50 p-3.5 sm:p-4 rounded-2xl border-2 border-linen-300">
+          {% for radio in form.role %}
+            <label class="flex items-center gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer transition-colors text-base font-semibold text-gray-800">
+              {{ radio.tag }}
+              <span>{{ radio.choice_label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Preferred Language -->
+      <div>
+        <label for="{{ form.preferred_language.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
+          🌐 {{ form.preferred_language.label }}
+        </label>
+        {{ form.preferred_language }}
+        <p class="text-xs sm:text-sm text-gray-500 mt-1">
+          CareLens will speak and explain documents in this language.
+        </p>
+      </div>
+
+      <!-- Email (Optional) -->
+      <div>
+        <label for="{{ form.email.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
+          ✉️ {{ form.email.label }}
+        </label>
+        {{ form.email }}
+      </div>
+
+      <!-- Password & Confirm -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="{{ form.password.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
+            🔒 {{ form.password.label }} <span class="text-crimson">*</span>
+          </label>
+          {{ form.password }}
+        </div>
+        <div>
+          <label for="{{ form.password_confirm.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
+            🔒 {{ form.password_confirm.label }} <span class="text-crimson">*</span>
+          </label>
+          {{ form.password_confirm }}
+        </div>
+      </div>
+
+      <!-- Submit Action -->
+      <button
+        type="submit"
+        class="w-full btn-senior bg-sapphire hover:bg-sapphire-hover text-white py-4 sm:py-5 text-xl font-extrabold shadow-lg rounded-2xl transition-transform active:scale-98 mt-3"
+      >
+        <span>✨ Register & Take Quick Tour</span>
+      </button>
+    </form>
+
+    <!-- Divider & Login Link -->
+    <div class="mt-6 pt-6 border-t-2 border-linen-200 text-center space-y-3">
+      <p class="text-base sm:text-lg text-gray-700">
+        Already have an account?
+      </p>
+      <a
+        href="{% url 'companion:login' %}"
+        class="inline-block w-full btn-senior bg-white hover:bg-linen-50 text-sapphire border-2 border-sapphire font-bold py-3 rounded-2xl shadow-sm text-base sm:text-lg"
+      >
+        🚪 Log In Here
+      </a>
+
+      <div>
+        <a
+          href="{% url 'companion:home' %}"
+          class="inline-flex items-center gap-1 text-sm sm:text-base font-semibold text-gray-500 hover:text-gray-800 mt-2"
+        >
+          <span>⬅️</span> Back to Home Dashboard
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
