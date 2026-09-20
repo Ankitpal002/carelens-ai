@@ -1,0 +1,35 @@
+<!-- MODAL 1: GEMINI API KEY CONFIGURATION -->
+<div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3.5 sm:p-4" style="padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom));">
+  <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[90vh] max-h-[90dvh] overflow-y-auto border-4 border-sapphire shadow-2xl">
+    <h3 data-i18n="apiKeyModalTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">
+      🔑 Connect Gemini AI
+    </h3>
+    <p id="apiKeyModalPrompt" data-i18n="apiKeyModalDesc" class="text-base sm:text-lg text-gray-600 mb-3">
+      Enter your Google Gemini API key to activate real AI vision on your photos.
+    </p>
+    <p class="text-sm sm:text-base text-sapphire font-semibold mb-4">
+      <span data-i18n="apiKeyModalLink">👉 Get a free key in 30 seconds at:</span> <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-bold">Google AI Studio →</a>
+    </p>
+
+    <input 
+      type="password" 
+      id="apiKeyInput" 
+      placeholder="Paste your key here: AIzaSy..." 
+      class="w-full p-3.5 sm:p-4 text-base sm:text-xl border-2 border-linen-300 rounded-xl mb-4 font-mono focus:border-sapphire focus:outline-none"
+      onkeydown="if(event.key==='Enter') saveApiKey()"
+    />
+
+    <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+      <button id="saveApiKeyBtn" onclick="saveApiKey()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white flex-1">
+        <span data-i18n="apiKeyModalSave">✔ Save &amp; Connect</span>
+      </button>
+      <button onclick="closeApiKeyModal()" class="btn-senior bg-linen-100 hover:bg-linen-200 text-gray-800 px-6">
+        <span data-i18n="apiKeyModalCancel">Cancel</span>
+      </button>
+    </div>
+
+    <p data-i18n="apiKeyModalNote" class="text-xs sm:text-sm text-gray-500 mt-4 text-center">
+      🔒 Your key is stored only in your browser (localStorage). Never shared.
+    </p>
+  </div>
+</div>

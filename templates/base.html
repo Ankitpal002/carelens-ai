@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#1E3A8A">
+  <meta name="description" content="CareLens AI - Intelligent Visual Companion for Seniors. Explains medicine bottles, paper bills, appliance dials, and notices with voice guidance.">
+  <title>{% block title %}CareLens AI — Senior Visual Companion{% endblock %}</title>
+
+  <!-- Google Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sapphire: { DEFAULT: '#1E3A8A', hover: '#172554', light: '#EFF6FF' },
+            sage: { DEFAULT: '#2D6A4F', light: '#E8F5E9', border: '#81C784' },
+            crimson: { DEFAULT: '#DC2626', light: '#FEF2F2', border: '#F87171' },
+            honey: { DEFAULT: '#D97706', light: '#FFFBEB', border: '#FBBF24' },
+            linen: { 50: '#FAF8F5', 100: '#F4EFEA', 200: '#E8DFD8', 300: '#D5C7BC' }
+          },
+          fontFamily: {
+            sans: ['Outfit', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Design System & Dark Mode Styles -->
+  <link rel="stylesheet" href="{% static 'css/design_system.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dark_mode.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="transition-colors duration-200">
+
+  <!-- TOP ACCESSIBILITY & SETTINGS HEADER -->
+  <header class="bg-white border-b-2 border-linen-200 sticky top-0 z-40 px-3 sm:px-4 py-2.5 sm:py-3 shadow-sm" style="padding-top: max(10px, env(safe-area-inset-top));">
+    <div class="max-w-4xl mx-auto flex flex-col xs:flex-row items-center justify-between gap-2 sm:gap-3">
+      
+      <!-- Brand & Senior Badge -->
+      <div class="flex items-center justify-between w-full xs:w-auto gap-2.5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sapphire text-white flex items-center justify-center text-xl sm:text-2xl shadow-md flex-shrink-0">
+            🔍
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900 leading-tight">
+              CareLens <span class="text-sapphire">AI</span>
+            </h1>
+            <p class="text-xs sm:text-sm font-semibold text-sage flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+              <span data-i18n="seniorBadge">Senior Companion Mode Active</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accessibility Toolbar -->
+      <div class="flex items-center justify-end gap-1.5 sm:gap-2 w-full xs:w-auto overflow-x-auto py-0.5 scrollbar-none">
+        
+        <!-- Text Size Magnifier Toggle -->
+        <button id="textSizeBtn" onclick="toggleTextSize()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-base sm:text-lg hover:bg-linen-100 flex items-center gap-1 flex-shrink-0" title="Increase Text Size" aria-label="Adjust font size">
+          <span>🔍</span>
+          <span id="textSizeLabel" class="hidden md:inline text-sm sm:text-base">Text: Normal</span>
+        </button>
+
+        <!-- Language Selector -->
+        <div class="relative flex items-center flex-shrink-0">
+          <select
+            id="langSelector"
+            onchange="onLanguageChange()"
+            class="h-10 sm:h-12 pl-2.5 pr-7 sm:pl-3 sm:pr-8 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-semibold text-xs sm:text-base focus:outline-none focus:border-sapphire cursor-pointer appearance-none shadow-sm max-w-[125px] sm:max-w-none truncate"
+            title="Response Language"
+            aria-label="Select response language"
+          >
+            {% for code, label in languages %}
+              <option value="{{ code }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+          <span class="pointer-events-none absolute right-2 text-gray-500 text-xs sm:text-sm">▾</span>
+        </div>
+
+        <!-- Dark / Light Mode Comfort Toggle -->
+        <button id="contrastBtn" onclick="toggleDarkMode()" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl border-2 border-linen-300 bg-linen-50 text-gray-800 font-bold text-lg sm:text-xl flex items-center justify-center hover:bg-linen-100 flex-shrink-0" title="Toggle Dark / Light Mode" aria-label="Toggle Dark or Light Mode">
+          🌙
+        </button>
+
+        <!-- WhatsApp Settings -->
+        <button onclick="openWhatsAppModal()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-green-600 text-green-700 font-bold text-sm sm:text-base hover:bg-green-50 flex items-center gap-1 flex-shrink-0" title="Set Caregiver WhatsApp Number">
+          <span>💬</span>
+          <span class="hidden md:inline" data-i18n="whatsappBtn">WhatsApp</span>
+        </button>
+
+        <!-- Gemini API Key Modal Trigger -->
+        <button onclick="openApiKeyModal()" class="h-10 sm:h-12 px-2.5 sm:px-3.5 rounded-xl border-2 border-sapphire text-sapphire font-bold text-sm sm:text-base hover:bg-blue-50 flex items-center gap-1 flex-shrink-0" title="Configure API Key">
+          <span>🔑</span>
+          <span class="hidden md:inline" data-i18n="apiKeyBtn">API Key</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-4xl w-full mx-auto p-3.5 sm:p-6 flex flex-col justify-center" style="padding-bottom: max(16px, env(safe-area-inset-bottom));">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- INCLUDED MODALS -->
+  {% include 'companion/modals/api_key_modal.html' %}
+  {% include 'companion/modals/whatsapp_modal.html' %}
+  {% include 'companion/modals/image_modal.html' %}
+
+  <!-- JAVASCRIPT MODULES -->
+  <script src="{% static 'js/audio_companion.js' %}"></script>
+  <script src="{% static 'js/camera.js' %}"></script>
+  <script src="{% static 'js/voice_qa.js' %}"></script>
+  <script src="{% static 'js/whatsapp_bridge.js' %}"></script>
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

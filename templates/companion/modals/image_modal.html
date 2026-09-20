@@ -1,0 +1,9 @@
+<!-- MODAL 3: FULL IMAGE PREVIEW -->
+<div id="imageModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-4" onclick="closeImageModal()">
+  <div class="max-w-2xl w-full max-h-[90vh] max-h-[90dvh] bg-white rounded-2xl overflow-hidden p-2.5 sm:p-3" onclick="event.stopPropagation()">
+    <img id="fullImagePreview" src="" alt="Full preview" class="w-full h-auto max-h-[75vh] max-h-[75dvh] object-contain rounded-xl" />
+    <button class="btn-senior bg-gray-900 text-white w-full mt-2.5" onclick="closeImageModal()">
+      <span data-i18n="closePhoto">Close Photo</span>
+    </button>
+  </div>
+</div>

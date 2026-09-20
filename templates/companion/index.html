@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- ======================================================== -->
+<!-- VIEW 1: CAPTURE / UPLOAD SCREEN                          -->
+<!-- ======================================================== -->
+<div id="viewCapture" class="flex flex-col gap-4 sm:gap-6">
+  
+  <!-- Friendly Greeting Banner -->
+  <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 border-linen-200 shadow-sm text-center">
+    <h2 data-i18n="heroTitle" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 leading-tight">
+      Point at Anything — CareLens Explains It!
+    </h2>
+    <p data-i18n="heroDesc" class="text-base sm:text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+      Point your camera at <strong>any item, medicine bottle, paper bill, appliance dial, food, or letter</strong>. Tap one button and CareLens will speak what it is and what to do.
+    </p>
+  </div>
+
+  <!-- Real-Time AI Status Banner -->
+  <div id="aiStatusCard" class="rounded-2xl p-3.5 sm:p-5 border-3 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 ai-status-no-key">
+    <div class="flex items-center gap-2.5 sm:gap-3">
+      <span id="aiStatusDot" class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full animate-pulse flex-shrink-0"></span>
+      <div>
+        <p id="aiStatusTitle" class="text-base sm:text-xl font-extrabold leading-tight">
+          Live AI Status: API Key Needed for Real Image Analysis
+        </p>
+        <p id="aiStatusSubtitle" class="text-xs sm:text-base mt-0.5 font-medium">
+          To analyze real photos with Google Gemini AI, please enter your free API key.
+        </p>
+      </div>
+    </div>
+    <button onclick="openApiKeyModal()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-4 sm:px-5 min-h-[44px] sm:min-h-[48px] text-base sm:text-lg w-full sm:w-auto flex-shrink-0 shadow-md">
+      <span data-i18n="setApiKeyBtn">🔑 Set API Key</span>
+    </button>
+  </div>
+
+  <!-- THE SINGLE UNIVERSAL ACTION BUTTON (Giant Viewport Shutter) -->
+  <div 
+    id="cameraDropzone"
+    onclick="openLiveWebcam()"
+    class="bg-white hover:bg-blue-50/50 border-4 border-dashed border-sapphire/60 hover:border-sapphire rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[240px] sm:min-h-[300px] md:min-h-[340px] shadow-xl group"
+    role="button"
+    tabindex="0"
+    aria-label="Tap to open camera and point at anything"
+  >
+    <div class="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-full bg-sapphire text-white flex items-center justify-center text-4xl sm:text-6xl md:text-7xl mb-3 sm:mb-5 group-hover:scale-105 transition-transform shadow-lg">
+      📸
+    </div>
+    <span data-i18n="cameraBtnTitle" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-1.5 leading-tight">
+      Tap Here to Open Camera
+    </span>
+    <span data-i18n="cameraBtnSub" class="text-base sm:text-xl md:text-2xl text-sapphire font-semibold">
+      Opens live camera viewfinder to scan anything
+    </span>
+  </div>
+
+  <!-- Quick Upload from Device -->
+  <div class="flex flex-col sm:flex-row gap-3">
+    <button 
+      onclick="triggerFilePicker()" 
+      class="btn-senior bg-white hover:bg-linen-50 text-gray-800 border-2 border-linen-300 w-full"
+    >
+      <span data-i18n="uploadBtn">📁 Or Upload Photo / Document from Device</span>
+    </button>
+  </div>
+
+  <!-- Hidden File Inputs -->
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelected(event)" />
+  <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleFileSelected(event)" />
+
+  <!-- COLLAPSIBLE DEMO TEST SAMPLES -->
+  <div class="border border-linen-300 bg-white rounded-2xl p-3.5 sm:p-4 mt-1 shadow-sm">
+    <details class="cursor-pointer">
+      <summary class="text-base sm:text-lg font-bold text-gray-700 flex items-center justify-between select-none">
+        <span data-i18n="sampleTitle">💡 Testing without a physical object? Try quick sample images</span>
+        <span data-i18n="sampleClick" class="text-xs sm:text-sm font-semibold text-sapphire flex-shrink-0 ml-2">Click to expand</span>
+      </summary>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-3 pt-3 border-t border-linen-200">
+        <button onclick="loadPreset('medication')" class="btn-senior bg-linen-50 hover:bg-amber-50 text-amber-900 border border-amber-300 text-sm sm:text-base py-2 px-3 min-h-[48px]">
+          <span data-i18n="sampleMed">💊 Medicine Bottle</span>
+        </button>
+        <button onclick="loadPreset('billing')" class="btn-senior bg-linen-50 hover:bg-blue-50 text-blue-900 border border-blue-300 text-sm sm:text-base py-2 px-3 min-h-[48px]">
+          <span data-i18n="sampleBill">⚡ Electric Bill</span>
+        </button>
+        <button onclick="loadPreset('scam')" class="btn-senior bg-linen-50 hover:bg-red-50 text-red-900 border border-red-300 text-sm sm:text-base py-2 px-3 min-h-[48px]">
+          <span data-i18n="sampleScam">🚨 Suspicious Letter</span>
+        </button>
+      </div>
+    </details>
+  </div>
+</div>
+
+
+<!-- ======================================================== -->
+<!-- VIEW 2: LOADING SPINNER (Calm, Reassuring for Seniors)   -->
+<!-- ======================================================== -->
+<div id="viewLoading" class="hidden flex-col items-center justify-center py-12 sm:py-16 px-4 text-center">
+  <div class="w-16 h-16 sm:w-24 sm:h-24 border-6 sm:border-8 border-sapphire/20 border-t-sapphire rounded-full animate-spin mb-4 sm:mb-6"></div>
+  <h3 data-i18n="loadingTitle" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 sm:mb-3">
+    Analyzing Your Photo...
+  </h3>
+  <p id="loadingMessage" data-i18n="loadingDesc" class="text-lg sm:text-2xl text-gray-600 max-w-md">
+    Please give CareLens just a moment. We are sending this to Gemini AI to analyze it for you.
+  </p>
+</div>
+
+
+<!-- ======================================================== -->
+<!-- VIEW 3: RESULTS SCREEN                                   -->
+<!-- ======================================================== -->
+<div id="viewResults" class="hidden flex-col gap-4 sm:gap-6">
+
+  <!-- Top Action Bar: Re-Scan + Image Preview -->
+  <div class="flex items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border-2 border-linen-200 shadow-sm">
+    <button onclick="resetToHome()" class="btn-senior bg-linen-100 hover:bg-linen-200 text-gray-800 px-4 sm:px-5 min-h-[48px] sm:min-h-[52px] text-base sm:text-lg">
+      <span data-i18n="scanAnotherBtn">⬅️ Scan Another</span>
+    </button>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <img id="resultThumbnail" src="" alt="Thumbnail of scanned document" class="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-xl border-2 border-linen-300 shadow-sm cursor-pointer" onclick="openImageModal()" />
+      <span data-i18n="photoCaptured" class="text-xs sm:text-base text-gray-500 font-semibold hidden xs:inline">Photo captured</span>
+    </div>
+  </div>
+
+  <!-- 1. SAFETY TRUST BADGE (WCAG 2.2 AAA High Contrast) -->
+  <div id="safetyBadgeContainer" class="rounded-2xl p-4 sm:p-5 border-4 flex items-center gap-3 sm:gap-4 shadow-sm bg-sage-light border-sage text-sage">
+    <div id="safetyBadgeIcon" class="text-4xl sm:text-5xl flex-shrink-0">🛡️</div>
+    <div>
+      <div id="safetyBadgeTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wide leading-tight">
+        VERIFIED SAFE
+      </div>
+      <p id="safetyBadgeDesc" class="text-base sm:text-xl md:text-2xl font-medium mt-0.5 sm:mt-1">
+        This notice is authentic and safe to follow.
+      </p>
+    </div>
+  </div>
+
+  <!-- 2. "EXPLAIN LIKE I'M 75" SUMMARY BOX -->
+  <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-3 border-linen-300 shadow-md">
+    <div class="flex items-center justify-between mb-3">
+      <span data-i18n="plainSummaryBadge" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-sapphire bg-blue-50 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-blue-200">
+        Plain Language Summary
+      </span>
+      <span id="classificationTag" class="text-xs sm:text-sm font-bold bg-linen-100 text-gray-700 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg">
+        DOCUMENT
+      </span>
+    </div>
+
+    <p id="summaryText" class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 leading-relaxed mb-5 sm:mb-6">
+      Loading explanation...
+    </p>
+
+    <!-- STICKY AUDIO VOICE PLAYER (Calibrated for Seniors ~0.88x) -->
+    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+      <div class="flex items-center gap-2.5 sm:gap-3 text-sapphire w-full sm:w-auto">
+        <div id="waveContainer" class="hidden flex items-center gap-1 h-6 sm:h-8 flex-shrink-0">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+        <div>
+          <p data-i18n="voiceCompanion" class="font-bold text-base sm:text-xl text-sapphire">Voice Audio Companion</p>
+          <p data-i18n="voicePace" class="text-xs sm:text-sm text-gray-600 font-medium">Gentle pace (0.88x speed) for easy listening</p>
+        </div>
+      </div>
+
+      <button id="audioToggleBtn" onclick="toggleAudioPlayback()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white w-full sm:w-auto px-6 sm:px-8 shadow-md">
+        <span id="audioIcon" class="text-xl sm:text-2xl">🔊</span>
+        <span id="audioLabel" data-i18n="readAloud">Read Aloud to Me</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. EXTRACTED ACTION CARDS -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+    
+    <!-- Primary Action Card -->
+    <div class="bg-white rounded-2xl p-4 sm:p-6 border-2 border-linen-200 shadow-sm flex items-center gap-3 sm:gap-4">
+      <div id="action1Icon" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
+        💵
+      </div>
+      <div class="min-w-0 flex-1">
+        <p id="action1Label" class="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-wider truncate">
+          Primary Detail
+        </p>
+        <p id="action1Value" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mt-0.5 break-words">
+          --
+        </p>
+      </div>
+    </div>
+
+    <!-- Secondary Action Card -->
+    <div class="bg-white rounded-2xl p-4 sm:p-6 border-2 border-linen-200 shadow-sm flex items-center gap-3 sm:gap-4">
+      <div id="action2Icon" class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
+        📅
+      </div>
+      <div class="min-w-0 flex-1">
+        <p id="action2Label" class="text-sm sm:text-base font-bold text-gray-500 uppercase tracking-wider truncate">
+          Important Note
+        </p>
+        <p id="action2Value" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mt-0.5 break-words">
+          --
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 4. ASK CARELENS A QUESTION -->
+  <div class="bg-white rounded-2xl p-4 sm:p-6 border-2 border-blue-200 shadow-sm">
+    <h4 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
+      <span>💬</span>
+      <span data-i18n="askTitle">Have a question about this? Ask CareLens:</span>
+    </h4>
+
+    <div class="flex gap-2 mb-3 items-stretch">
+      <input
+        id="questionInput"
+        type="text"
+        data-i18n-placeholder="questionPlaceholder"
+        placeholder="Type your question here..."
+        class="flex-1 min-w-0 p-3 sm:p-4 text-base sm:text-xl border-2 border-linen-300 rounded-xl focus:border-sapphire focus:outline-none"
+        onkeydown="if(event.key==='Enter') submitTextQuestion()"
+      />
+      <button
+        id="micBtn"
+        onclick="toggleSpeechQuestion()"
+        title="Tap to speak your question"
+        class="w-12 sm:w-16 min-w-[48px] sm:min-w-[58px] rounded-xl border-2 border-gray-300 bg-gray-50 text-2xl sm:text-3xl flex items-center justify-center hover:bg-gray-100 flex-shrink-0 transition-colors"
+      >
+        <span id="micIcon">🎤</span>
+      </button>
+    </div>
+
+    <button onclick="submitTextQuestion()" class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white w-full mb-3">
+      <span>🔍</span>
+      <span id="askBtnText" data-i18n="askBtn">Ask CareLens This Question</span>
+    </button>
+
+    <p id="voiceQuestionStatus" data-i18n="voiceStatusDefault" class="text-sm sm:text-lg text-gray-500 italic text-center">
+      e.g. "When should I take this?" or "Is this a scam?"
+    </p>
+
+    <!-- Answer Box -->
+    <div id="voiceAnswerBox" class="hidden mt-4 p-4 sm:p-5 rounded-xl bg-blue-50 border-2 border-blue-200">
+      <p data-i18n="answerTitle" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-sapphire mb-1 sm:mb-2">CareLens Answer:</p>
+      <p id="answerText" class="text-xl sm:text-2xl font-semibold text-gray-900 leading-relaxed"></p>
+      <button onclick="playAudio(document.getElementById('answerText').innerText)" class="mt-3 btn-senior bg-sapphire text-white text-sm sm:text-base px-4 sm:px-5 min-h-[44px] w-full sm:w-auto">
+        <span data-i18n="readAnswerAloud">🔊 Read Answer Aloud</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. 1-TAP CAREGIVER BRIDGE (WhatsApp) -->
+  <div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-center sm:text-left">
+        <h4 data-i18n="caregiverTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-green-900 mb-1">
+          Want a second opinion?
+        </h4>
+        <p id="whatsappRecipientHint" data-i18n="caregiverDesc" class="text-base sm:text-xl text-gray-700">
+          Send this summary to your family or caregiver on WhatsApp.
+        </p>
+      </div>
+      <div class="flex flex-col gap-2 w-full sm:w-auto flex-shrink-0">
+        <button onclick="shareViaWhatsApp('default')" class="btn-senior bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 w-full sm:w-auto">
+          <span class="text-xl sm:text-2xl">💬</span>
+          <span id="defaultShareLabel" data-i18n="sendFamily">Send to Family (WhatsApp)</span>
+        </button>
+        <button onclick="shareViaWhatsApp('custom')" class="btn-senior bg-white border-2 border-green-600 text-green-700 hover:bg-green-50 px-6 sm:px-8 w-full sm:w-auto">
+          <span>📲</span>
+          <span data-i18n="sendOther">Send to Other Number</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FULLSCREEN LIVE WEBCAM MODAL -->
+<div id="webcamModal" class="hidden fixed inset-0 z-50 bg-black flex flex-col" style="height: 100vh; height: 100dvh; width: 100vw; padding:0;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;padding-top:max(12px, env(safe-area-inset-top));background:rgba(0,0,0,0.75);flex-shrink:0;">
+    <span data-i18n="webcamHeader" style="color:white;font-size:18px;font-weight:800;" class="sm:text-2xl">📹 Point camera at anything</span>
+    <button onclick="closeLiveWebcam()" style="color:white;font-size:32px;font-weight:700;background:none;border:none;cursor:pointer;line-height:1;padding:4px 8px;">✕</button>
+  </div>
+
+  <div style="flex:1;position:relative;overflow:hidden;background:#000;">
+    <video id="webcamVideo" autoplay playsinline webkit-playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+    <div style="position:absolute;inset:6%;border:3px solid rgba(255,255,255,0.75);border-radius:18px;pointer-events:none;display:flex;align-items:center;justify-content:center;">
+      <span data-i18n="webcamReticle" style="color:white;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:10px;font-size:15px;font-weight:700;text-align:center;" class="sm:text-lg">Hold item inside this frame</span>
+    </div>
+  </div>
+
+  <div style="padding:14px 16px;padding-bottom:max(16px, env(safe-area-inset-bottom));background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;">
+    <button
+      onclick="captureWebcamSnapshot()"
+      style="width:100%;max-width:480px;background:#1e3a8a;color:white;border:none;border-radius:16px;padding:16px 0;font-size:20px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(30,58,138,0.5);touch-action:manipulation;"
+      class="sm:text-2xl sm:py-5"
+    >
+      <span data-i18n="webcamSnap">📸 Tap to Take Photo Now</span>
+    </button>
+    <button onclick="closeLiveWebcam()" data-i18n="webcamCancel" style="color:#cbd5e1;font-size:16px;font-weight:600;background:none;border:none;cursor:pointer;padding:6px 12px;">
+      Cancel and go back
+    </button>
+  </div>
+</div>
+
+<canvas id="snapshotCanvas" class="hidden"></canvas>
+{% endblock %}

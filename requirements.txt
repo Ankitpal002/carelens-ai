@@ -1,0 +1,23 @@
+# CareLens AI - Python Dependencies
+# Senior Visual Companion & Multimodal Generative AI
+
+# Core Framework
+django>=5.1.0,<6.0.0
+
+# Generative AI SDKs (Google Gemini Multimodal Vision & Reasoning)
+google-genai>=0.1.1
+google-generativeai>=0.8.0
+
+# Environment & Configuration Management
+python-dotenv>=1.0.1
+
+# Image Processing & Validation
+pillow>=10.4.0
+
+# WSGI Server for Production Deployment
+gunicorn>=23.0.0
+
+# Testing & Quality Assurance
+pytest>=8.3.0
+pytest-django>=4.9.0
+pytest-mock>=3.14.0

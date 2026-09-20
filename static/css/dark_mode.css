@@ -1,0 +1,359 @@
+/* ==================================================== */
+/* SENIOR-OPTIMIZED COMFORT DARK MODE                  */
+/* Deep midnight slate #0F172A with crystal clear text */
+/* ==================================================== */
+
+body.dark-mode {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+}
+
+body.dark-mode header {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .bg-white {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .bg-linen-50,
+body.dark-mode .bg-linen-100 {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .bg-linen-200 {
+  background-color: #1E293B !important;
+}
+
+body.dark-mode .border-linen-200,
+body.dark-mode .border-linen-300 {
+  border-color: #334155 !important;
+}
+
+/* Text contrast fixes for seniors */
+body.dark-mode .text-gray-900,
+body.dark-mode .text-gray-800 {
+  color: #F8FAFC !important;
+}
+
+body.dark-mode .text-gray-700,
+body.dark-mode .text-gray-600 {
+  color: #CBD5E1 !important;
+}
+
+body.dark-mode .text-gray-500 {
+  color: #94A3B8 !important;
+}
+
+body.dark-mode .text-sapphire {
+  color: #60A5FA !important;
+}
+
+body.dark-mode .text-sage {
+  color: #34D399 !important;
+}
+
+/* Headings */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #F8FAFC !important;
+}
+
+/* Hero / Greeting banner */
+body.dark-mode [data-i18n="heroTitle"] {
+  color: #F8FAFC !important;
+}
+body.dark-mode [data-i18n="heroDesc"] {
+  color: #CBD5E1 !important;
+}
+body.dark-mode [data-i18n="heroDesc"] strong {
+  color: #F8FAFC !important;
+}
+
+/* AI Status Banner in Dark Mode */
+body.dark-mode #aiStatusCard.ai-status-connected {
+  background-color: #064E3B !important;
+  border: 3px solid #34D399 !important;
+  box-shadow: 0 4px 14px rgba(6, 78, 59, 0.4) !important;
+}
+body.dark-mode #aiStatusCard.ai-status-connected #aiStatusTitle {
+  color: #FFFFFF !important;
+}
+body.dark-mode #aiStatusCard.ai-status-connected #aiStatusSubtitle {
+  color: #D1FAE5 !important;
+}
+body.dark-mode #aiStatusCard.ai-status-connected #aiStatusDot {
+  background-color: #34D399 !important;
+}
+
+body.dark-mode #aiStatusCard.ai-status-no-key {
+  background-color: #78350F !important;
+  border: 3px solid #FBBF24 !important;
+  box-shadow: 0 4px 14px rgba(120, 53, 15, 0.4) !important;
+}
+body.dark-mode #aiStatusCard.ai-status-no-key #aiStatusTitle {
+  color: #FFFFFF !important;
+}
+body.dark-mode #aiStatusCard.ai-status-no-key #aiStatusSubtitle {
+  color: #FEF3C7 !important;
+}
+body.dark-mode #aiStatusCard.ai-status-no-key #aiStatusDot {
+  background-color: #FBBF24 !important;
+}
+
+/* Camera Viewport Dropzone */
+body.dark-mode #cameraDropzone {
+  background-color: #1E293B !important;
+  border-color: #3B82F6 !important;
+}
+body.dark-mode #cameraDropzone:hover {
+  background-color: #1E3A5F !important;
+  border-color: #60A5FA !important;
+}
+body.dark-mode [data-i18n="cameraBtnTitle"] {
+  color: #F8FAFC !important;
+}
+body.dark-mode [data-i18n="cameraBtnSub"] {
+  color: #60A5FA !important;
+}
+
+/* Form Controls & Inputs in Dark Mode */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="tel"],
+body.dark-mode select {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: #475569 !important;
+}
+body.dark-mode input::placeholder {
+  color: #64748B !important;
+}
+body.dark-mode select option {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+}
+
+/* Secondary Action & Toolbar Buttons */
+body.dark-mode #textSizeBtn,
+body.dark-mode #contrastBtn {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: #475569 !important;
+}
+body.dark-mode header button[onclick="openWhatsAppModal()"] {
+  background-color: #064E3B40 !important;
+  border-color: #10B981 !important;
+  color: #34D399 !important;
+}
+body.dark-mode header button[onclick="openApiKeyModal()"] {
+  background-color: #1E3A8A40 !important;
+  border-color: #3B82F6 !important;
+  color: #60A5FA !important;
+}
+
+/* Upload button */
+body.dark-mode button[onclick="triggerFilePicker()"] {
+  background-color: #1E293B !important;
+  color: #E2E8F0 !important;
+  border-color: #475569 !important;
+}
+body.dark-mode button[onclick="triggerFilePicker()"]:hover {
+  background-color: #334155 !important;
+  color: #FFFFFF !important;
+}
+
+/* Action Cards & Icon containers */
+body.dark-mode #action1Label,
+body.dark-mode #action2Label {
+  color: #94A3B8 !important;
+}
+body.dark-mode #action1Value,
+body.dark-mode #action2Value {
+  color: #F8FAFC !important;
+}
+body.dark-mode #action1Icon {
+  background-color: #78350F !important;
+  color: #FDE68A !important;
+  border: 1px solid #B45309 !important;
+}
+body.dark-mode #action2Icon {
+  background-color: #064E3B !important;
+  color: #A7F3D0 !important;
+  border: 1px solid #059669 !important;
+}
+
+/* Results Header & Summary */
+body.dark-mode button[onclick="resetToHome()"] {
+  background-color: #334155 !important;
+  color: #F8FAFC !important;
+  border-color: #475569 !important;
+}
+body.dark-mode [data-i18n="plainSummaryBadge"] {
+  background-color: #1E3A8A !important;
+  color: #93C5FD !important;
+  border-color: #3B82F6 !important;
+}
+body.dark-mode #classificationTag {
+  background-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+body.dark-mode #summaryText {
+  color: #F8FAFC !important;
+}
+
+/* Safety Badges in Dark Mode */
+body.dark-mode #safetyBadgeContainer.bg-sage-light {
+  background-color: #064E3B !important;
+  border-color: #34D399 !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode #safetyBadgeContainer.bg-sage-light #safetyBadgeTitle {
+  color: #FFFFFF !important;
+}
+body.dark-mode #safetyBadgeContainer.bg-sage-light #safetyBadgeDesc {
+  color: #D1FAE5 !important;
+}
+
+body.dark-mode #safetyBadgeContainer.bg-crimson-light {
+  background-color: #7F1D1D !important;
+  border-color: #F87171 !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode #safetyBadgeContainer.bg-crimson-light #safetyBadgeTitle {
+  color: #FFFFFF !important;
+}
+body.dark-mode #safetyBadgeContainer.bg-crimson-light #safetyBadgeDesc {
+  color: #FEE2E2 !important;
+}
+
+body.dark-mode #safetyBadgeContainer.bg-honey-light {
+  background-color: #78350F !important;
+  border-color: #FBBF24 !important;
+  color: #FFFFFF !important;
+}
+body.dark-mode #safetyBadgeContainer.bg-honey-light #safetyBadgeTitle {
+  color: #FFFFFF !important;
+}
+body.dark-mode #safetyBadgeContainer.bg-honey-light #safetyBadgeDesc {
+  color: #FEF3C7 !important;
+}
+
+/* Audio voice player in Dark Mode */
+body.dark-mode .bg-blue-50 {
+  background-color: #132238 !important;
+  border-color: #2563EB !important;
+}
+body.dark-mode [data-i18n="voiceCompanion"] {
+  color: #60A5FA !important;
+}
+body.dark-mode [data-i18n="voicePace"] {
+  color: #CBD5E1 !important;
+}
+
+/* WhatsApp caregiver section in Dark Mode */
+body.dark-mode .bg-emerald-50 {
+  background-color: #082F1E !important;
+  border-color: #059669 !important;
+}
+body.dark-mode [data-i18n="caregiverTitle"] {
+  color: #34D399 !important;
+}
+body.dark-mode #whatsappRecipientHint {
+  color: #CBD5E1 !important;
+}
+body.dark-mode button[onclick="shareViaWhatsApp('custom')"] {
+  background-color: #1E293B !important;
+  border-color: #10B981 !important;
+  color: #34D399 !important;
+}
+
+/* Question box & Answer box in Dark Mode */
+body.dark-mode #voiceAnswerBox {
+  background-color: #132238 !important;
+  border-color: #3B82F6 !important;
+}
+body.dark-mode [data-i18n="answerTitle"] {
+  color: #60A5FA !important;
+}
+body.dark-mode #answerText {
+  color: #F8FAFC !important;
+}
+body.dark-mode #micBtn {
+  background-color: #1E293B !important;
+  border-color: #475569 !important;
+  color: #F8FAFC !important;
+}
+body.dark-mode #voiceQuestionStatus {
+  color: #94A3B8 !important;
+}
+
+/* Sample test drawer */
+body.dark-mode details {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+body.dark-mode summary {
+  color: #E2E8F0 !important;
+}
+body.dark-mode summary span[data-i18n="sampleTitle"] {
+  color: #F8FAFC !important;
+}
+body.dark-mode summary span[data-i18n="sampleClick"] {
+  color: #60A5FA !important;
+}
+body.dark-mode button[onclick="loadPreset('medication')"] {
+  background-color: #78350F4D !important;
+  color: #FDE68A !important;
+  border-color: #B45309 !important;
+}
+body.dark-mode button[onclick="loadPreset('billing')"] {
+  background-color: #1E3A8A4D !important;
+  color: #93C5FD !important;
+  border-color: #2563EB !important;
+}
+body.dark-mode button[onclick="loadPreset('scam')"] {
+  background-color: #7F1D1D4D !important;
+  color: #FCA5A5 !important;
+  border-color: #DC2626 !important;
+}
+
+/* Modals in Dark Mode */
+body.dark-mode #apiKeyModal > div,
+body.dark-mode #whatsAppModal > div,
+body.dark-mode #imageModal > div {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+  border-color: #3B82F6 !important;
+}
+body.dark-mode #apiKeyModal h3,
+body.dark-mode #whatsAppModal h3 {
+  color: #F8FAFC !important;
+}
+body.dark-mode #apiKeyModalPrompt,
+body.dark-mode #whatsAppModal p {
+  color: #CBD5E1 !important;
+}
+body.dark-mode #apiKeyInput,
+body.dark-mode #waNumberInput {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: #475569 !important;
+}
+body.dark-mode button[onclick="closeApiKeyModal()"],
+body.dark-mode button[onclick="closeWhatsAppModal()"] {
+  background-color: #334155 !important;
+  color: #F8FAFC !important;
+  border-color: #475569 !important;
+}
+body.dark-mode [data-i18n="apiKeyModalNote"],
+body.dark-mode [data-i18n="waModalNote"] {
+  color: #94A3B8 !important;
+}

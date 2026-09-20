@@ -1,0 +1,40 @@
+<!-- MODAL 2: CAREGIVER WHATSAPP NUMBER CONFIGURATION -->
+<div id="whatsAppModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3.5 sm:p-4" style="padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom));">
+  <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full max-h-[90vh] max-h-[90dvh] overflow-y-auto border-4 border-green-600 shadow-2xl">
+    <div class="flex items-center gap-2.5 sm:gap-3 mb-2">
+      <span class="text-2xl sm:text-3xl">💬</span>
+      <h3 data-i18n="waModalTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900">
+        Caregiver WhatsApp
+      </h3>
+    </div>
+    <p data-i18n="waModalDesc" class="text-base sm:text-lg text-gray-600 mb-4">
+      Save your family member or caregiver's WhatsApp number for instant 1-tap second opinion sharing.
+    </p>
+
+    <div class="mb-4">
+      <label data-i18n="waModalLabel" class="block text-sm sm:text-base font-bold text-gray-700 mb-1.5">
+        Phone Number (with country code)
+      </label>
+      <input 
+        type="tel" 
+        id="waNumberInput" 
+        placeholder="e.g. 14155552671 or 919876543210" 
+        class="w-full p-3.5 sm:p-4 text-base sm:text-xl border-2 border-linen-300 rounded-xl font-mono focus:border-green-600 focus:outline-none"
+        onkeydown="if(event.key==='Enter') saveWhatsAppNumber()"
+      />
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+      <button onclick="saveWhatsAppNumber()" class="btn-senior bg-green-600 hover:bg-green-700 text-white flex-1">
+        <span data-i18n="waModalSave">✔ Save Number</span>
+      </button>
+      <button onclick="closeWhatsAppModal()" class="btn-senior bg-linen-100 hover:bg-linen-200 text-gray-800 px-6">
+        <span data-i18n="waModalCancel">Cancel</span>
+      </button>
+    </div>
+
+    <p data-i18n="waModalNote" class="text-xs sm:text-sm text-gray-500 mt-4 text-center">
+      🔒 Stored locally on this device. Never uploaded.
+    </p>
+  </div>
+</div>
