@@ -331,6 +331,15 @@ function saveApiKey() {
 // IMAGE PROCESSING & DEMO PRESETS
 // ----------------------------------------------------
 window.processImage = async function(dataUrl) {
+  // ─── API Key Guard ──────────────────────────────────────────────────────────
+  // If no API key is set, block real image analysis and prompt the senior to
+  // set their key first. Do NOT silently fall back to demo results.
+  if (!window.activeApiKey || !window.activeApiKey.trim()) {
+    showApiKeyError();
+    return;
+  }
+  // ────────────────────────────────────────────────────────────────────────────
+
   showLoading(true);
   try {
     const res = await fetch('/api/analyze/', {
@@ -341,26 +350,157 @@ window.processImage = async function(dataUrl) {
       },
       body: JSON.stringify({
         image_base64: window.currentImageBase64,
-        api_key: window.activeApiKey || null,
+        api_key: window.activeApiKey,
         language: window.activeLanguage
       })
     });
 
     const json = await res.json();
+    if (res.status === 400 && json.error === 'api_key_missing') {
+      // Backend double-check returned missing key error
+      showApiKeyError();
+      return;
+    }
     if (json.success && json.data) {
       window.currentAnalysis = json.data;
       renderResults(json.data, dataUrl);
     } else {
-      alert('Analysis error: ' + (json.error || 'Could not analyze image.'));
+      showAnalysisError(json.error || 'Could not analyze the image. Please try again.');
     }
   } catch (err) {
     console.error('API Error:', err);
-    // Fallback to local preset simulation if offline
-    loadPreset('medication');
+    showAnalysisError('You appear to be offline. Please check your internet connection and try again.');
   } finally {
     showLoading(false);
   }
 };
+
+/**
+ * Shows a friendly, senior-appropriate error banner when no API key is set.
+ * Opens the API Key modal automatically after a short delay so the user
+ * can immediately enter their key.
+ */
+function showApiKeyError() {
+  // Remove any existing error banner first
+  const existingBanner = document.getElementById('apiKeyErrorBanner');
+  if (existingBanner) existingBanner.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'apiKeyErrorBanner';
+  banner.setAttribute('role', 'alert');
+  banner.setAttribute('aria-live', 'assertive');
+  banner.style.cssText = [
+    'position: fixed',
+    'top: 50%',
+    'left: 50%',
+    'transform: translate(-50%, -50%)',
+    'z-index: 9999',
+    'background: #fff',
+    'border: 4px solid #DC2626',
+    'border-radius: 20px',
+    'padding: 32px 36px',
+    'max-width: 480px',
+    'width: 90vw',
+    'box-shadow: 0 24px 64px rgba(0,0,0,0.28)',
+    'text-align: center',
+    'font-family: var(--font-primary, Inter, sans-serif)'
+  ].join('; ');
+
+  banner.innerHTML = `
+    <div style="font-size: 52px; margin-bottom: 12px;">🔑</div>
+    <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin: 0 0 12px;">
+      API Key Required
+    </h2>
+    <p style="font-size: 1.1rem; color: #475569; line-height: 1.6; margin: 0 0 8px;">
+      To analyze your real photo with Google Gemini AI, please enter your free API key first.
+    </p>
+    <p style="font-size: 0.95rem; color: #64748b; margin: 0 0 24px;">
+      Demo simulation presets still work without a key.
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <button
+        id="apiKeyErrorSetBtn"
+        onclick="document.getElementById('apiKeyErrorBanner').remove(); openApiKeyModal();"
+        style="background: #1A56DB; color: #fff; border: none; border-radius: 14px; padding: 16px 24px; font-size: 1.1rem; font-weight: 700; cursor: pointer; min-height: 56px;"
+      >
+        🔑 Set My API Key Now
+      </button>
+      <button
+        onclick="document.getElementById('apiKeyErrorBanner').remove();"
+        style="background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; border-radius: 14px; padding: 14px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; min-height: 52px;"
+      >
+        ✖ Close
+      </button>
+    </div>
+  `;
+
+  // Dark overlay backdrop
+  const overlay = document.createElement('div');
+  overlay.id = 'apiKeyErrorOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9998;';
+  overlay.onclick = () => { banner.remove(); overlay.remove(); };
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(banner);
+
+  // Focus the Set Key button for keyboard accessibility
+  setTimeout(() => {
+    const btn = document.getElementById('apiKeyErrorSetBtn');
+    if (btn) btn.focus();
+  }, 50);
+
+  // Also clean up overlay when banner is removed
+  const closeBtns = banner.querySelectorAll('button');
+  closeBtns.forEach(btn => {
+    btn.addEventListener('click', () => overlay.remove());
+  });
+}
+
+/**
+ * Shows a friendly analysis error message inline.
+ */
+function showAnalysisError(message) {
+  const existingBanner = document.getElementById('analysisErrorBanner');
+  if (existingBanner) existingBanner.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'analysisErrorBanner';
+  banner.setAttribute('role', 'alert');
+  banner.style.cssText = [
+    'position: fixed',
+    'top: 50%',
+    'left: 50%',
+    'transform: translate(-50%, -50%)',
+    'z-index: 9999',
+    'background: #fff',
+    'border: 4px solid #F59E0B',
+    'border-radius: 20px',
+    'padding: 28px 32px',
+    'max-width: 440px',
+    'width: 90vw',
+    'box-shadow: 0 20px 60px rgba(0,0,0,0.22)',
+    'text-align: center',
+    'font-family: var(--font-primary, Inter, sans-serif)'
+  ].join('; ');
+
+  banner.innerHTML = `
+    <div style="font-size: 48px; margin-bottom: 12px;">⚠️</div>
+    <h2 style="font-size: 1.4rem; font-weight: 700; color: #1e293b; margin: 0 0 10px;">Something Went Wrong</h2>
+    <p style="font-size: 1.05rem; color: #475569; line-height: 1.6; margin: 0 0 20px;">${message}</p>
+    <button
+      onclick="document.getElementById('analysisErrorBanner').remove(); document.getElementById('analysisErrorOverlay')?.remove();"
+      style="background: #1A56DB; color: #fff; border: none; border-radius: 14px; padding: 14px 28px; font-size: 1rem; font-weight: 700; cursor: pointer; min-height: 52px; width: 100%;"
+    >OK, Got It</button>
+  `;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'analysisErrorOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;';
+  overlay.onclick = () => { banner.remove(); overlay.remove(); };
+
+  document.body.appendChild(overlay);
+  document.body.appendChild(banner);
+}
 
 async function loadPreset(presetKey) {
   showLoading(true);

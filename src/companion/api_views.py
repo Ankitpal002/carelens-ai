@@ -33,6 +33,21 @@ def analyze_image_api(request: HttpRequest) -> JsonResponse:
     if not image_base64:
         return HttpResponseBadRequest("Missing required 'image_base64' parameter.")
 
+    if not api_key or not str(api_key).strip():
+        logger.warning("Analyze API called without an API key.")
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'api_key_missing',
+                'message': (
+                    'A Gemini API key is required to analyze real photos. '
+                    'Please set your free API key using the 🔑 button on the page. '
+                    'Simulation demo presets work without a key.'
+                )
+            },
+            status=400
+        )
+
     try:
         service = GeminiVisionService(api_key=api_key)
         result = service.analyze_image(image_base64=image_base64, mime_type=mime_type, language=language)
