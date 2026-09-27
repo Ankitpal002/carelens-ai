@@ -19,6 +19,23 @@ from .utils.localization import get_translations_for_language
 
 logger = logging.getLogger(__name__)
 
+# Shared language choices used across views
+LANGUAGES_LIST = [
+    ('English', '🌐 English'),
+    ('Hindi', '🇮🇳 हिन्दी'),
+    ('Marathi', '🇮🇳 मराठी'),
+    ('Tamil', '🇮🇳 தமிழ்'),
+    ('Telugu', '🇮🇳 తెలుగు'),
+    ('Bengali', '🇮🇳 বাংলা'),
+    ('Kannada', '🇮🇳 ಕನ್ನಡ'),
+    ('Malayalam', '🇮🇳 മലയാളം'),
+    ('Gujarati', '🇮🇳 ગુજરાતી'),
+    ('Punjabi', '🇮🇳 ਪੰਜਾਬੀ'),
+    ('Urdu', '🇮🇳 اردو'),
+    ('Arabic', '🌍 العربية'),
+    ('Spanish', '🌍 Español'),
+]
+
 
 class HomeCompanionView(TemplateView):
     """
@@ -42,9 +59,17 @@ class HomeCompanionView(TemplateView):
                     preferred_language='English',
                     has_completed_tour=False
                 )
-            # Check if user needs the first-time tour
-            if not profile.has_completed_tour or self.request.session.get('just_logged_in_show_tour', False):
+            # Check if user needs the first-time tour:
+            # Trigger tour if not completed and not already shown in this session,
+            # or if explicitly flagged upon fresh signup/login.
+            if not profile.has_completed_tour:
+                if not self.request.session.get('tour_shown_in_session', False) or self.request.session.get('just_logged_in_show_tour', False):
+                    show_tour = True
+                    self.request.session['tour_shown_in_session'] = True
+                    self.request.session.pop('just_logged_in_show_tour', None)
+            elif self.request.session.get('just_logged_in_show_tour', False):
                 show_tour = True
+                self.request.session.pop('just_logged_in_show_tour', None)
         else:
             # Guest profile fallback
             profile = SeniorProfile.objects.filter(user__isnull=True).first()
@@ -54,9 +79,7 @@ class HomeCompanionView(TemplateView):
                     preferred_language='English',
                     has_completed_tour=False
                 )
-            # Show tour if guest specifically triggered it in session
-            if self.request.session.get('just_logged_in_show_tour', False):
-                show_tour = True
+            show_tour = False
 
         caregiver = None
         if profile:
@@ -99,7 +122,7 @@ class SignUpView(View):
         if request.user.is_authenticated:
             return redirect('companion:home')
         form = UserSignUpForm()
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'languages': LANGUAGES_LIST})
 
     def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
@@ -134,10 +157,11 @@ class SignUpView(View):
             # Log the user in immediately
             login(request, user)
             request.session['just_logged_in_show_tour'] = True
+            request.session['tour_shown_in_session'] = False
             messages.success(request, f"Welcome to CareLens AI, {name}! Let's walk you through the key features.")
             return redirect('companion:home')
 
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'languages': LANGUAGES_LIST})
 
 
 class LoginView(View):
@@ -150,7 +174,7 @@ class LoginView(View):
         if request.user.is_authenticated:
             return redirect('companion:home')
         form = UserLoginForm()
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'languages': LANGUAGES_LIST})
 
     def post(self, request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated:
@@ -176,13 +200,14 @@ class LoginView(View):
                 # If first time or tour not completed, trigger guide
                 if not profile.has_completed_tour:
                     request.session['just_logged_in_show_tour'] = True
+                    request.session['tour_shown_in_session'] = False
 
                 messages.success(request, f"Welcome back, {profile.name}!")
                 return redirect('companion:home')
             else:
                 messages.error(request, "Invalid username or password. Please check and try again.")
 
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'form': form, 'languages': LANGUAGES_LIST})
 
 
 class LogoutView(View):

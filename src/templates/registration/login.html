@@ -3,99 +3,208 @@
 
 {% block title %}Log In — CareLens AI Senior Companion{% endblock %}
 
+{% block extra_css %}
+<style>
+  .auth-card { animation: card-slide-up 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes card-slide-up {
+    from { opacity:0; transform:translateY(20px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  .shake { animation: shake 0.4s ease; }
+  @keyframes shake {
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-5px); }
+    80%{ transform:translateX(5px); }
+  }
+  .input-field {
+    width:100%; padding:1rem 1.1rem; font-size:1.1rem;
+    border:2px solid #E8DFD8; border-radius:0.85rem;
+    background:#FAF8F5; outline:none;
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-field:focus {
+    border-color:#1E3A8A;
+    box-shadow: 0 0 0 3px rgba(30,58,138,0.12);
+    background:#fff;
+  }
+  .input-field.has-error { border-color:#DC2626; background:#FEF2F2; }
+  .pw-wrapper { position:relative; }
+  .pw-toggle {
+    position:absolute; right:14px; top:50%; transform:translateY(-50%);
+    background:none; border:none; cursor:pointer;
+    font-size:1.25rem; color:#94a3b8;
+    padding:4px; border-radius:6px;
+    transition:color 0.15s;
+  }
+  .pw-toggle:hover { color:#1E3A8A; }
+  .submit-btn {
+    width:100%; min-height:60px; font-size:1.2rem; font-weight:800;
+    background:#1E3A8A; color:#fff; border:none; border-radius:1rem;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    gap:0.6rem; transition:background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(30,58,138,0.25);
+  }
+  .submit-btn:hover { background:#172554; box-shadow:0 6px 24px rgba(30,58,138,0.35); }
+  .submit-btn:active { transform:scale(0.97); }
+  .submit-btn:disabled { background:#94a3b8; cursor:not-allowed; box-shadow:none; }
+  .spinner {
+    width:22px; height:22px; border:3px solid rgba(255,255,255,0.4);
+    border-top-color:#fff; border-radius:50%;
+    animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .divider-line {
+    display:flex; align-items:center; gap:1rem; color:#94a3b8;
+    font-size:0.9rem; font-weight:600;
+  }
+  .divider-line::before,.divider-line::after {
+    content:''; flex:1; border-top:2px solid #E8DFD8;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-md mx-auto w-full py-4 sm:py-8">
   
   <!-- Login Card -->
-  <div class="bg-white rounded-3xl p-6 sm:p-10 border-2 border-linen-200 shadow-xl">
-    
-    <!-- Header with friendly icon -->
+  <div id="loginCard" class="auth-card bg-white rounded-3xl p-6 sm:p-10 border-2 border-linen-200 shadow-xl">
+
+    <!-- Header -->
     <div class="text-center mb-6 sm:mb-8">
-      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-sapphire/10 text-sapphire rounded-2xl mx-auto flex items-center justify-center text-3xl sm:text-4xl mb-3 shadow-inner">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-50 text-sapphire rounded-2xl mx-auto flex items-center justify-center text-3xl sm:text-4xl mb-3 shadow-inner border-2 border-blue-100">
         🔐
       </div>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
         Welcome Back
       </h2>
-      <p class="text-base sm:text-lg text-gray-600 mt-1">
-        Sign in to access your personalized CareLens companion
+      <p class="text-base sm:text-lg text-gray-500 mt-1">
+        Sign in to your CareLens companion
       </p>
     </div>
 
-    <!-- Error Messages -->
+    <!-- Error Banner -->
     {% if form.errors %}
-      <div class="mb-6 p-4 rounded-2xl bg-crimson-light border-2 border-crimson text-crimson text-base font-semibold" role="alert">
-        <p class="font-extrabold flex items-center gap-1.5 mb-1">
-          <span>⚠️</span> Please correct the errors below:
-        </p>
-        <ul class="list-disc list-inside text-sm sm:text-base">
+      <div id="loginErrorBanner" class="mb-5 p-4 rounded-2xl bg-red-50 border-2 border-red-300 text-red-700 font-semibold shake" role="alert">
+        <p class="font-extrabold flex items-center gap-1.5 mb-1"><span>⚠️</span> Please fix the error below:</p>
+        <ul class="list-disc list-inside text-sm">
           {% for field, errors in form.errors.items %}
-            {% for error in errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
+            {% for error in errors %}<li>{{ error }}</li>{% endfor %}
           {% endfor %}
         </ul>
       </div>
     {% endif %}
 
     <!-- Login Form -->
-    <form method="post" action="{% url 'companion:login' %}" class="space-y-5">
+    <form id="loginForm" method="post" action="{% url 'companion:login' %}" class="space-y-5" novalidate>
       {% csrf_token %}
 
+      <!-- Username -->
       <div>
-        <label for="{{ form.username.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
-          👤 {{ form.username.label }}
+        <label for="id_username" class="block text-base font-bold text-gray-800 mb-1.5">
+          👤 Username
         </label>
-        {{ form.username }}
+        <input
+          type="text" id="id_username" name="username"
+          placeholder="Enter your username"
+          class="input-field {% if form.username.errors %}has-error{% endif %}"
+          autocomplete="username" autofocus
+          value="{{ form.username.value|default:'' }}"
+        />
+        {% if form.username.errors %}
+          <p class="text-red-500 text-sm mt-1 font-semibold">⚠️ {{ form.username.errors.0 }}</p>
+        {% endif %}
       </div>
 
+      <!-- Password with toggle -->
       <div>
-        <label for="{{ form.password.id_for_label }}" class="block text-base sm:text-lg font-bold text-gray-800 mb-1.5">
-          🔑 {{ form.password.label }}
+        <label for="id_password" class="block text-base font-bold text-gray-800 mb-1.5">
+          🔑 Password
         </label>
-        {{ form.password }}
+        <div class="pw-wrapper">
+          <input
+            type="password" id="id_password" name="password"
+            placeholder="Enter your password"
+            class="input-field {% if form.password.errors %}has-error{% endif %}"
+            autocomplete="current-password"
+            style="padding-right:3rem;"
+          />
+          <button type="button" class="pw-toggle" onclick="togglePasswordVisibility('id_password', this)" title="Show/Hide password" aria-label="Toggle password visibility">
+            👁️
+          </button>
+        </div>
+        {% if form.password.errors %}
+          <p class="text-red-500 text-sm mt-1 font-semibold">⚠️ {{ form.password.errors.0 }}</p>
+        {% endif %}
       </div>
 
-      <button
-        type="submit"
-        class="w-full btn-senior bg-sapphire hover:bg-sapphire-hover text-white py-4 sm:py-5 text-xl font-extrabold shadow-lg rounded-2xl transition-transform active:scale-98"
-      >
-        <span>🚪 Log In to CareLens</span>
+      <!-- Submit -->
+      <button type="submit" id="loginSubmitBtn" class="submit-btn mt-2" onclick="showLoginLoading()">
+        <span id="loginBtnText">🚪 Log In to CareLens</span>
+        <span id="loginSpinner" class="spinner hidden"></span>
       </button>
     </form>
 
-    <!-- Demo / Test Quick Account Box for Judges -->
-    <div class="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-200 text-sapphire text-sm sm:text-base">
-      <p class="font-bold flex items-center gap-1.5 mb-1">
-        <span>💡</span> Quick Demo Access:
-      </p>
-      <p class="text-xs sm:text-sm text-gray-700">
-        New to CareLens? <a href="{% url 'companion:signup' %}" class="font-bold text-sapphire underline hover:text-sapphire-hover">Create an account</a> to experience the full interactive first-time onboarding tour!
-      </p>
+    <!-- Info box -->
+    <div class="mt-5 p-4 rounded-2xl bg-blue-50 border border-blue-200 text-sm">
+      <p class="font-bold text-sapphire flex items-center gap-1.5 mb-1"><span>💡</span> First time here?</p>
+      <p class="text-gray-600">New to CareLens? <a href="{% url 'companion:signup' %}" class="font-bold text-sapphire underline hover:text-blue-800">Create a free account</a> and get a guided walkthrough of all features!</p>
     </div>
 
-    <!-- Divider & Links -->
-    <div class="mt-6 pt-6 border-t-2 border-linen-200 text-center space-y-3">
-      <p class="text-base sm:text-lg text-gray-700">
-        Don't have an account yet?
-      </p>
+    <!-- Divider -->
+    <div class="mt-5 pt-5 border-t-2 border-linen-200 space-y-3">
       <a
         href="{% url 'companion:signup' %}"
-        class="inline-block w-full btn-senior bg-white hover:bg-linen-50 text-sapphire border-2 border-sapphire font-bold py-3 rounded-2xl shadow-sm text-base sm:text-lg"
+        class="inline-flex w-full items-center justify-center gap-2 min-h-[52px] bg-white hover:bg-linen-50 text-sapphire border-2 border-sapphire font-bold rounded-xl shadow-sm text-base transition-all hover:shadow-md"
       >
-        ✨ Create Free Account & Start Tour
+        ✨ Create Free Account &amp; Start Tour
       </a>
-
-      <div>
-        <a
-          href="{% url 'companion:home' %}"
-          class="inline-flex items-center gap-1 text-sm sm:text-base font-semibold text-gray-500 hover:text-gray-800 mt-2"
-        >
-          <span>⬅️</span> Continue as Guest without signing in
+      <div class="text-center">
+        <a href="{% url 'companion:home' %}" class="inline-flex items-center gap-1 text-sm font-semibold text-gray-400 hover:text-gray-700 transition-colors">
+          ⬅️ Continue as Guest
         </a>
       </div>
     </div>
 
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.innerText = '🙈';
+    btn.title = 'Hide password';
+  } else {
+    input.type = 'password';
+    btn.innerText = '👁️';
+    btn.title = 'Show password';
+  }
+}
+
+function showLoginLoading() {
+  const btn = document.getElementById('loginSubmitBtn');
+  const txt = document.getElementById('loginBtnText');
+  const spinner = document.getElementById('loginSpinner');
+  if (btn && txt && spinner) {
+    // Brief delay to allow form validation first
+    setTimeout(() => {
+      const form = document.getElementById('loginForm');
+      const username = document.getElementById('id_username');
+      const password = document.getElementById('id_password');
+      if (username && username.value.trim() && password && password.value.trim()) {
+        try { sessionStorage.removeItem('carelens_tour_dismissed'); } catch (e) {}
+        btn.disabled = true;
+        txt.innerText = 'Signing In...';
+        spinner.classList.remove('hidden');
+      }
+    }, 50);
+  }
+}
+</script>
 {% endblock %}

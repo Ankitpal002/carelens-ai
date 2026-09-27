@@ -1,121 +1,130 @@
-<!-- ACCESSIBLE INTERACTIVE ONBOARDING QUICK GUIDE MODAL -->
-<div id="onboardingModal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm transition-opacity duration-200" role="dialog" aria-modal="true" aria-labelledby="tourStepTitle">
-  <div class="relative bg-white rounded-3xl max-w-2xl w-full border-4 border-sapphire shadow-2xl overflow-hidden flex flex-col my-auto transition-transform duration-200 transform scale-100">
-    
-    <!-- Top Progress & Header Bar -->
-    <div class="bg-sapphire text-white p-4 sm:p-5 flex items-center justify-between">
-      <div class="flex items-center gap-2 sm:gap-3">
-        <span class="text-2xl sm:text-3xl">📖</span>
-        <div>
-          <h3 class="text-lg sm:text-2xl font-extrabold leading-tight">
-            CareLens AI Quick Guide
-          </h3>
-          <p id="tourStepCounter" class="text-xs sm:text-sm font-semibold text-blue-100">
-            Step 1 of 6 • Welcome Tour
-          </p>
-        </div>
-      </div>
+<!-- INTERACTIVE ONBOARDING POINTER GUIDE (NO POPUP WINDOW & NO BLUR) -->
+<!-- Uses a crystal-clear cutout window, directional pointer arrow, and bouncing beacon to frame each button with 100% clarity -->
 
-      <button
-        onclick="skipOnboardingTour()"
-        class="text-blue-100 hover:text-white font-bold text-sm sm:text-base px-2.5 py-1 rounded-lg hover:bg-sapphire-hover transition-colors"
-        title="Close Guide"
-      >
-        ✕ Close
-      </button>
+<!-- 1. Crystal-Clear Spotlight Cutout Window (ZERO BLUR - frames the target button so it is razor-sharp) -->
+<div id="tourSpotlightCutout" class="hidden fixed pointer-events-none z-[9990] transition-all duration-300" style="border-radius: 16px; border: 3px solid #1E3A8A; box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.45), 0 0 25px rgba(30, 58, 138, 0.55); background: transparent;"></div>
+
+<!-- 2. Target Element Beacon (Animated 3D Pointer Hand & Pulsing Radar Ring pointing directly at the button) -->
+<div id="tourPointerBeacon" class="hidden fixed z-[9998] pointer-events-none transition-all duration-300">
+  <div class="relative flex items-center justify-center">
+    <!-- Pulsing Radar Rings -->
+    <span class="absolute w-12 h-12 rounded-full bg-sapphire/30 animate-ping"></span>
+    <span class="absolute w-8 h-8 rounded-full bg-sapphire/40"></span>
+    <!-- Animated Pointer Emoji/Icon -->
+    <div id="tourBeaconHand" class="relative z-10 w-9 h-9 rounded-full bg-sapphire text-white shadow-lg flex items-center justify-center text-lg font-bold border-2 border-white tour-beacon-bounce">
+      👉
     </div>
+  </div>
+</div>
 
-    <!-- Progress Indicator Bar -->
-    <div class="w-full bg-blue-100 h-2">
-      <div id="tourProgressBar" class="bg-sage h-2 transition-all duration-300" style="width: 16.66%;"></div>
-    </div>
+<!-- 3. Floating Pointer Callout Card -->
+<div id="tourPointerCard" class="hidden fixed z-[9999] max-w-[420px] w-[calc(100vw-28px)] bg-white rounded-3xl border-3 border-sapphire shadow-[0_20px_50px_rgba(15,23,42,0.4)] overflow-visible transition-all duration-300 flex flex-col" role="region" aria-label="Feature Guide Pointer">
 
-    <!-- Tour Body Container -->
-    <div class="p-5 sm:p-8 flex-1 flex flex-col justify-between">
-      
-      <!-- Current Step Content -->
-      <div id="tourContent" class="space-y-4 sm:space-y-6">
-        
-        <div class="flex items-center gap-4">
-          <div id="tourStepIcon" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-sapphire-light text-sapphire border-2 border-sapphire/30 flex items-center justify-center text-3xl sm:text-5xl flex-shrink-0 shadow-inner">
-            📸
-          </div>
-          <div>
-            <span id="tourStepBadge" class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-sapphire bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-              Core Feature
-            </span>
-            <h4 id="tourStepTitle" class="text-xl sm:text-3xl font-extrabold text-gray-900 mt-1 leading-tight">
-              1. Point Camera at Anything
-            </h4>
-          </div>
-        </div>
+  <!-- Directional Pointer Caret Arrow -->
+  <div id="tourPointerArrow" class="pointer-arrow absolute w-5 h-5 bg-white border-sapphire transform rotate-45 transition-all duration-200"></div>
 
-        <p id="tourStepDescription" class="text-base sm:text-xl text-gray-700 leading-relaxed font-medium">
-          Tap the giant blue camera shutter or upload any photo. CareLens easily reads medicine bottles, paper utility bills, letters, notices, food labels, and appliance dials.
+  <!-- Card Top Header Bar -->
+  <div class="bg-sapphire text-white px-4 py-3 sm:px-5 sm:py-3.5 rounded-t-[21px] flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="text-xl sm:text-2xl">🎯</span>
+      <div>
+        <span id="tourStepBadge" class="text-xs sm:text-sm font-extrabold uppercase tracking-wide text-blue-200">
+          Feature 1 of 8
+        </span>
+        <p id="tourStepCounter" class="text-[11px] sm:text-xs font-semibold text-blue-100/90 leading-tight">
+          Visual Feature Pointer
         </p>
-
-        <!-- Helpful Tip Box inside Step -->
-        <div id="tourStepTipBox" class="p-3.5 sm:p-4 rounded-2xl bg-linen-100 border border-linen-300 text-sm sm:text-base text-gray-800 font-semibold flex items-center gap-2.5">
-          <span class="text-xl">💡</span>
-          <span id="tourStepTipText">Testing without a physical item? Use the collapsible "Sample Images" right on the home screen!</span>
-        </div>
-
       </div>
+    </div>
+    <button
+      onclick="skipOnboardingTour()"
+      class="text-blue-200 hover:text-white font-bold text-xs sm:text-sm px-2.5 py-1 rounded-lg hover:bg-sapphire-hover transition-colors"
+      title="Close Guide"
+      aria-label="Close Guide"
+    >
+      ✕ Close
+    </button>
+  </div>
 
-      <!-- Tour Navigation & Action Controls -->
-      <div class="mt-6 pt-5 border-t-2 border-linen-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-        
-        <!-- Audio Read Aloud Step -->
+  <!-- Progress Bar -->
+  <div class="w-full bg-blue-100 h-1.5 overflow-hidden">
+    <div id="tourProgressBar" class="bg-sage h-1.5 transition-all duration-400" style="width: 12.5%;"></div>
+  </div>
+
+  <!-- Card Body: Feature Usability Details -->
+  <div class="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+    
+    <!-- Title & Icon -->
+    <div class="flex items-start gap-3">
+      <div id="tourStepIcon" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-50 text-sapphire border-2 border-blue-200 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0 shadow-sm">
+        📸
+      </div>
+      <div class="min-w-0 flex-1">
+        <h4 id="tourStepTitle" class="text-lg sm:text-xl font-extrabold text-gray-900 leading-snug">
+          1. Point Camera at Anything
+        </h4>
+        <span class="text-xs font-bold text-sage inline-flex items-center gap-1 mt-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-sage"></span> Usability &amp; Function
+        </span>
+      </div>
+    </div>
+
+    <!-- Description / How to Use -->
+    <p id="tourStepDescription" class="text-sm sm:text-base text-gray-700 font-medium leading-relaxed bg-linen-50/70 p-3 rounded-xl border border-linen-200">
+      Tap this button to open the live camera viewfinder. Point at any medicine bottle, paper bill, appliance dial, food, or letter.
+    </p>
+
+    <!-- Usability Tip -->
+    <div id="tourStepTipBox" class="p-2.5 sm:p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs sm:text-sm text-amber-900 font-semibold flex items-center gap-2">
+      <span class="text-base flex-shrink-0">💡</span>
+      <span id="tourStepTipText" class="leading-tight">Hold steady inside the camera frame for fastest recognition.</span>
+    </div>
+
+    <!-- Audio Usability Listener -->
+    <div class="flex items-center justify-between gap-2 pt-1 border-t border-linen-200">
+      <button
+        id="tourAudioBtn"
+        onclick="readCurrentTourStepAloud()"
+        class="btn-senior bg-blue-50 hover:bg-blue-100 text-sapphire border border-blue-200 text-xs sm:text-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors"
+        title="Listen to this explanation"
+      >
+        <span>🔊</span>
+        <span id="tourAudioLabel">Read Usability Aloud</span>
+      </button>
+
+      <!-- Navigation Next/Prev/Finish -->
+      <div class="flex items-center gap-2">
         <button
-          id="tourAudioBtn"
-          onclick="readCurrentTourStepAloud()"
-          class="btn-senior bg-blue-50 hover:bg-blue-100 text-sapphire border-2 border-sapphire/30 text-sm sm:text-base px-3.5 sm:px-4 py-2 w-full sm:w-auto flex items-center justify-center gap-1.5"
-          title="Listen to this step"
+          id="tourPrevBtn"
+          onclick="prevTourStep()"
+          class="btn-senior bg-white hover:bg-linen-100 text-gray-700 border border-linen-300 px-3 py-1.5 text-xs sm:text-sm font-bold rounded-xl hidden"
         >
-          <span>🔊</span>
-          <span id="tourAudioLabel">Read Step Aloud</span>
+          ⬅️ Prev
         </button>
 
-        <!-- Next / Prev / Finish Buttons -->
-        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <button
-            id="tourPrevBtn"
-            onclick="prevTourStep()"
-            class="btn-senior bg-white hover:bg-linen-100 text-gray-700 border-2 border-linen-300 px-4 py-2.5 text-base sm:text-lg font-bold flex-1 sm:flex-initial hidden"
-          >
-            ⬅️ Back
-          </button>
+        <button
+          id="tourNextBtn"
+          onclick="nextTourStep()"
+          class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-4 py-1.5 text-xs sm:text-sm font-extrabold shadow-sm rounded-xl"
+        >
+          <span>Next ➡️</span>
+        </button>
 
-          <button
-            id="tourNextBtn"
-            onclick="nextTourStep()"
-            class="btn-senior bg-sapphire hover:bg-sapphire-hover text-white px-6 py-2.5 text-base sm:text-lg font-extrabold shadow-md flex-1 sm:flex-initial"
-          >
-            <span>Next Step ➡️</span>
-          </button>
-
-          <button
-            id="tourFinishBtn"
-            onclick="finishOnboardingTour()"
-            class="btn-senior bg-sage hover:bg-green-700 text-white px-6 py-2.5 text-base sm:text-lg font-extrabold shadow-md flex-1 sm:flex-initial hidden"
-          >
-            <span>🎉 Got It! Start Exploring</span>
-          </button>
-        </div>
-
+        <button
+          id="tourFinishBtn"
+          onclick="finishOnboardingTour()"
+          class="btn-senior bg-sage hover:bg-green-700 text-white px-4 py-1.5 text-xs sm:text-sm font-extrabold shadow-sm rounded-xl hidden"
+        >
+          <span>🎉 Got It!</span>
+        </button>
       </div>
-
-    </div>
-
-    <!-- Step Dots Footer -->
-    <div class="bg-linen-50 px-4 py-2.5 border-t border-linen-200 flex items-center justify-center gap-2">
-      <span class="tour-dot w-3 h-3 rounded-full bg-sapphire" data-step="0"></span>
-      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="1"></span>
-      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="2"></span>
-      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="3"></span>
-      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="4"></span>
-      <span class="tour-dot w-3 h-3 rounded-full bg-linen-300" data-step="5"></span>
     </div>
 
   </div>
+
+  <!-- Step Dots Indicator Footer -->
+  <div id="tourDotsContainer" class="bg-linen-50 px-4 py-2 border-t border-linen-200 rounded-b-[21px] flex items-center justify-center gap-2">
+    <!-- Rendered dynamically by onboarding_tour.js -->
+  </div>
+
 </div>

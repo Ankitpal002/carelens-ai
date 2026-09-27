@@ -107,3 +107,54 @@ class ScanRecord(models.Model):
 
     def __str__(self):
         return f"[{self.classification}] {self.safety_verdict} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+
+class SupportTicket(models.Model):
+    """
+    Helpdesk support ticket submitted by senior users or caregivers.
+    Email dispatch to support address is handled entirely server-side.
+    """
+    CATEGORY_CHOICES = [
+        ('camera', '📸 Camera / Scanning Issue'),
+        ('voice', '🔊 Voice or Audio Problem'),
+        ('language', '🌐 Language / Translation Issue'),
+        ('account', '👤 Account or Login Problem'),
+        ('whatsapp', '💬 WhatsApp Sharing Issue'),
+        ('ai_result', '🤖 AI Result Not Correct'),
+        ('accessibility', '♿ Accessibility or Display Issue'),
+        ('other', '❓ Other / General Question'),
+    ]
+
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('in_progress', 'In Progress'),
+        ('resolved', 'Resolved'),
+        ('closed', 'Closed'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='support_tickets')
+    name = models.CharField(max_length=100, help_text="Full name of the person raising the ticket")
+    email = models.EmailField(help_text="Reply-to email for support response")
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='other')
+    subject = models.CharField(max_length=200)
+    message = models.TextField(help_text="Detailed description of the issue")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+    ticket_id = models.CharField(max_length=16, unique=True, blank=True, help_text="Auto-generated short ticket reference")
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Support Ticket"
+        verbose_name_plural = "Support Tickets"
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.ticket_id:
+            import random
+            import string
+            self.ticket_id = 'CL-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"[{self.ticket_id}] {self.subject} ({self.status})"
+

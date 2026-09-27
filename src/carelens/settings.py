@@ -24,6 +24,16 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# CSRF Trusted Origins for Render and Production domains
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CSRF_TRUSTED_ORIGINS',
+        'https://*.onrender.com,http://localhost:8000,http://127.0.0.1:8000'
+    ).split(',')
+    if origin.strip()
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,6 +55,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Enable WhiteNoise for serving static files directly in production
+try:
+    import whitenoise
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+except ImportError:
+    pass
 
 ROOT_URLCONF = 'carelens.urls'
 
@@ -93,6 +110,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [SRC_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+try:
+    import whitenoise
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+except ImportError:
+    pass
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

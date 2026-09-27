@@ -17,6 +17,9 @@ pillow>=10.4.0
 # WSGI Server for Production Deployment
 gunicorn>=23.0.0
 
+# Static Files Serving for Production (Render, Heroku)
+whitenoise>=6.8.2
+
 # Testing & Quality Assurance
 pytest>=8.3.0
 pytest-django>=4.9.0
