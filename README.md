@@ -6,7 +6,9 @@
 [![Django 5.1](https://img.shields.io/badge/Django-5.1-success.svg)](https://www.djangoproject.com/)
 [![Powered by Google GenAI](https://img.shields.io/badge/GenAI-Google%20Gemini%20Vision-4285F4.svg)](https://ai.google.dev/)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AAA-brightgreen.svg)](#accessibility)
-[![Tests Passing](https://img.shields.io/badge/Tests-13%20Passed%20(100%25)-brightgreen.svg)](#testing)
+[![Live Demo](https://img.shields.io/badge/Render-Live%20Demo-brightgreen?logo=render&logoColor=white)](https://carelens-ai-3za4.onrender.com/)
+
+> 🌐 **Live Deployed Application:** [https://carelens-ai-3za4.onrender.com/](https://carelens-ai-3za4.onrender.com/)
 
 ---
 
